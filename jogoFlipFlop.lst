@@ -1,0 +1,3387 @@
+Microsoft (R) Macro Assembler Version 12.00.21005.1	    07/09/17 19:32:12
+jogoFlipFlop.asm					     Page 1 - 1
+
+
+				INCLUDE Irvine32.inc
+			      C ; Include file for Irvine32.lib             (Irvine32.inc)
+			      C 
+			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
+			      C 
+			      C INCLUDE SmallWin.inc		; MS-Windows prototypes, structures, and constants
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C INCLUDE VirtualKeys.inc
+			      C ; VirtualKeys.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C 
+			      C .NOLIST
+			      C .LIST
+			      C 
+
+ 00000003			OBSTACULO STRUCT
+ 00000000  00				x BYTE ? ;1 byte
+ 00000001  00				y BYTE ? ;1 byte
+ 00000002  00				caracter BYTE ?
+				OBSTACULO ENDS
+
+
+ 00000000			.data
+ 00000000 00				row BYTE 0
+ 00000001 00				col BYTE 0
+ 00000002 E2 00				jogador BYTE 226d,0
+ 00000004 DB 00				carac BYTE 219d,0
+ 00000006 50 4F 4E 54 4F		points BYTE "PONTOS: ",0
+	   53 3A 20 00
+ 0000000F 4E 49 56 45 4C		level BYTE "NIVEL: ",0
+	   3A 20 00
+ 00000017 4D 45 4C 48 4F		melhor_ponto BYTE "MELHOR PONTUACAO",0
+	   52 20 50 4F 4E
+	   54 55 41 43 41
+	   4F 00
+ 00000028 00000000			pontos DWORD 0
+ 0000002C 00000000			melhor_pontuacao DWORD 0
+ 00000030 00000000			nivel DWORD 0
+ 00000034 49 4E 49 43 49		opcao1_mp BYTE "INICIAR JOGO",0
+	   41 52 20 4A 4F
+	   47 4F 00
+ 00000041 49 4E 53 54 52		opcao2_mp BYTE "INSTRUCOES",0
+	   55 43 4F 45 53
+	   00
+ 0000004C 53 4F 42 52 45		opcao4_mp BYTE "SOBRE",0
+	   00
+ 00000052 53 41 49 52 00		opcao5_mp BYTE "SAIR",0
+ 00000057 43 4F 4E 54 49		opcao1_mg BYTE "CONTINUE",0
+	   4E 55 45 00
+ 00000060 4D 45 4E 55 20		opcao2_mg BYTE "MENU PRINCIPAL",0
+	   50 52 49 4E 43
+	   49 50 41 4C 00
+ 0000006F 53 41 49 52 00		opcao3_mg BYTE "SAIR",0
+ 00000074 2D 3E 00			seta_menu BYTE "->",0
+ 00000077 4D 6F 76 61 20		instrucoes_jogo_1 BYTE "Mova o personagem para desviar dos obstaculos",0
+	   6F 20 70 65 72
+	   73 6F 6E 61 67
+	   65 6D 20 70 61
+	   72 61 20 64 65
+	   73 76 69 61 72
+	   20 64 6F 73 20
+	   6F 62 73 74 61
+	   63 75 6C 6F 73
+	   00
+ 000000A5 55 74 69 6C 69		instrucoes_jogo_2 BYTE "Utilize as teclas A(LEFT), S(DOWN), D(RIGHT), W (UP)",0
+	   7A 65 20 61 73
+	   20 74 65 63 6C
+	   61 73 20 41 28
+	   4C 45 46 54 29
+	   2C 20 53 28 44
+	   4F 57 4E 29 2C
+	   20 44 28 52 49
+	   47 48 54 29 2C
+	   20 57 20 28 55
+	   50 29 00
+ 000000DA 5B 50 52 45 53		instrucoes_jogo_3 BYTE "[PRESSIONE ESC PARA VOLTAR AO MENU PRINCIPAL]",0
+	   53 49 4F 4E 45
+	   20 45 53 43 20
+	   50 41 52 41 20
+	   56 4F 4C 54 41
+	   52 20 41 4F 20
+	   4D 45 4E 55 20
+	   50 52 49 4E 43
+	   49 50 41 4C 5D
+	   00
+ 00000108 54 72 61 62 61		sobre_1 BYTE "Trabalho da Disciplina Laboratorio de Arquitetura de Computadores II",0
+	   6C 68 6F 20 64
+	   61 20 44 69 73
+	   63 69 70 6C 69
+	   6E 61 20 4C 61
+	   62 6F 72 61 74
+	   6F 72 69 6F 20
+	   64 65 20 41 72
+	   71 75 69 74 65
+	   74 75 72 61 20
+	   64 65 20 43 6F
+	   6D 70 75 74 61
+	   64 6F 72 65 73
+	   20 49 49 00
+ 0000014D 46 65 69 74 6F		sobre_2 BYTE "Feito por: Caroline Castor dos Santos RA: 551503",0
+	   20 70 6F 72 3A
+	   20 43 61 72 6F
+	   6C 69 6E 65 20
+	   43 61 73 74 6F
+	   72 20 64 6F 73
+	   20 53 61 6E 74
+	   6F 73 20 52 41
+	   3A 20 35 35 31
+	   35 30 33 00
+ 0000017E 50 72 6F 66 65		sobre_3 BYTE "Professor Doutor Luciano Neris",0
+	   73 73 6F 72 20
+	   44 6F 75 74 6F
+	   72 20 4C 75 63
+	   69 61 6E 6F 20
+	   4E 65 72 69 73
+	   00
+ 0000019D 55 46 53 43 41		sobre_4 BYTE "UFSCAR - DEPTO DE COMPUTACAO / Primeiro SEMESTRE DE 2017",0
+	   52 20 2D 20 44
+	   45 50 54 4F 20
+	   44 45 20 43 4F
+	   4D 50 55 54 41
+	   43 41 4F 20 2F
+	   20 50 72 69 6D
+	   65 69 72 6F 20
+	   53 45 4D 45 53
+	   54 52 45 20 44
+	   45 20 32 30 31
+	   37 00
+ 000001D6 20 20 00			blank BYTE "  ",0
+ 000001D9 1F				seta_menu_x BYTE 31
+ 000001DA 0B				seta_menu_y BYTE 11
+ 000001DB 02				jogadorx BYTE 2
+ 000001DC 02				jogadory BYTE 2
+ 000001DD  0000000A [			obstaculos OBSTACULO 10 DUP (<>)
+	    00 00 00
+	   ]
+ = 00000003				sizeObstaculo equ 3
+					
+					desenha_personagem PROTO, x:BYTE, y:BYTE
+					desenha_obstaculo PROTO, index:DWORD
+					apaga_obstaculo PROTO, index:DWORD
+					anda_obstaculo PROTO, index:DWORD
+					acrescenta_pontuacao PROTO pontuacao:DWORD
+					acrescenta_nivel PROTO nivelJogo:DWORD
+					verifica_nivel PROTO pontosJogo:DWORD
+					verifica_colisao PROTO, xJogador:BYTE, yJogador:BYTE
+					desenha_menu_F PROTO, x: BYTE, y:BYTE
+					desenha_menu_L PROTO, x: BYTE, y:BYTE
+					desenha_menu_I PROTO, x:BYTE, y:BYTE
+					desenha_menu_P PROTO, x:BYTE, y:BYTE
+					desenha_menu_S PROTO, x: BYTE, y:BYTE
+					desenha_menu_H PROTO, x: BYTE, y:BYTE
+					desenha_menu_G PROTO, x: BYTE, y:BYTE
+					desenha_menu_A PROTO, x: BYTE, y:BYTE
+					desenha_menu_M PROTO, x: BYTE, y:BYTE
+					desenha_menu_E PROTO, x: BYTE, y:BYTE
+					desenha_menu_O PROTO, x: BYTE, y:BYTE
+					desenha_menu_V PROTO, x: BYTE, y:BYTE
+					desenha_menu_R PROTO, x: BYTE, y:BYTE
+					
+					
+ 000001FB 00				indice BYTE 0
+					
+ 00000000			.code
+
+
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000000			main PROC
+				;Procedimento principal
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;limpa a tela
+ 00000000  E8 00000000 E		call Clrscr
+					;desenha o menu
+ 00000005  E8 0000045C		    call desenha_menu
+					
+					;quando o jogo terminar, posiciona o cursor fora da margem do jogo 
+ 0000000A  B2 00			mov dl,0
+ 0000000C  B6 1A			mov dh,26
+ 0000000E  E8 00000000 E		call Gotoxy
+ 00000013  E8 00000000 E		call Crlf
+					exit
+ 0000001F			main ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000001F			desenha_tela PROC
+				;Desenha todas das bordas da tela
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000001F  E8 00000017			call desenha_tela_cima
+ 00000024  E8 0000004F			call desenha_tela_esquerda
+ 00000029  E8 00000087			call desenha_tela_embaixo
+ 0000002E  E8 000000BF			call desenha_tela_direita
+ 00000033  C3				ret
+					exit
+ 0000003B			desenha_tela ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000003B			desenha_tela_cima PROC
+				;Desenha borda superior da tela
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000003B  C6 05 00000000 R		mov row,0
+	   00
+ 00000042  C6 05 00000001 R		mov col,0
+	   00
+					;move o cursor para as coordenadas dl controla a coluna e dh controla as linhas da tela
+ 00000049  8A 15 00000001 R		mov dl, col
+ 0000004F  8A 35 00000000 R		mov dh, row
+					;faz o loop 80 vezes, ou seja, a tela de jogo terá largura 80
+ 00000055  B9 00000050			mov ecx, 80
+ 0000005A				L0:
+ 0000005A  E8 00000000 E			call Gotoxy
+ 0000005F  A0 00000004 R			mov al, carac
+ 00000064  E8 00000000 E			call WriteChar
+ 00000069  FE 05 00000001 R			inc col
+ 0000006F  8A 15 00000001 R			mov dl,col
+ 00000075  E2 E3			LOOP L0
+ 00000077  C3				ret
+ 00000078			desenha_tela_cima ENDP
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000078			desenha_tela_esquerda PROC
+				;Desenha a borda esquerda da tela
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000078  C6 05 00000000 R		mov row, 0
+	   00
+ 0000007F  C6 05 00000001 R		mov col, 0
+	   00
+					;move o cursor para as coordenadas dl controla a coluna e dh controla as linhas da tela
+ 00000086  8A 15 00000001 R		mov dl,col
+ 0000008C  8A 35 00000000 R		mov dh, row
+					;faz o loop 25 vezes, ou seja, a tela de jogo terá altura 25
+ 00000092  B9 00000019			mov ecx,25
+ 00000097				L0:
+ 00000097  E8 00000000 E			call Gotoxy
+ 0000009C  A0 00000004 R			mov al, carac
+ 000000A1  E8 00000000 E			call WriteChar
+ 000000A6  FE 05 00000000 R			inc row
+ 000000AC  8A 35 00000000 R			mov dh,row
+ 000000B2  E2 E3			LOOP L0
+ 000000B4  C3				ret
+ 000000B5			desenha_tela_esquerda ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000000B5			desenha_tela_embaixo PROC
+				;Desenha a borda debaixo da tela
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000000B5  C6 05 00000000 R		mov row,25
+	   19
+ 000000BC  C6 05 00000001 R		mov col,0
+	   00
+					;move o cursor para as coordenadas dl controla a coluna e dh controla as linhas da tela
+ 000000C3  8A 15 00000001 R		mov dl,col
+ 000000C9  8A 35 00000000 R		mov dh,row
+					;faz o loop 80 vezes, ou seja, a tela de jogo terá largura 80
+ 000000CF  B9 00000050			mov ecx,80
+ 000000D4  E8 00000000 E		L0:	call Gotoxy
+ 000000D9  A0 00000004 R			mov al, carac
+ 000000DE  E8 00000000 E			call WriteChar
+ 000000E3  FE 05 00000001 R			inc col
+ 000000E9  8A 15 00000001 R			mov dl, col
+ 000000EF  E2 E3			LOOP L0
+ 000000F1  C3				ret
+ 000000F2			desenha_tela_embaixo ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000000F2			desenha_tela_direita PROC
+				;Desenha a borda direita da tela
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000000F2  C6 05 00000000 R		mov row,0
+	   00
+ 000000F9  C6 05 00000001 R		mov col,79
+	   4F
+					;move o cursor para as coordenadas dl controla a coluna e dh controla as linhas da tela
+ 00000100  8A 15 00000001 R		mov dl,col
+ 00000106  8A 35 00000000 R		mov dh,row
+					;faz o loop 25 vezes, ou seja, a tela de jogo terá altura 25
+ 0000010C  B9 00000019			mov ecx,25
+ 00000111  E8 00000000 E		L0:	call Gotoxy
+ 00000116  A0 00000004 R			mov al, carac
+ 0000011B  E8 00000000 E			call WriteChar
+ 00000120  FE 05 00000000 R			inc row
+ 00000126  8A 35 00000000 R			mov dh, row
+ 0000012C  E2 E3			LOOP L0
+ 0000012E  C3				ret
+ 0000012F			desenha_tela_direita ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				; OS SEGUINTES PROCEDIMENTOS AUXILIAM A IMPRESSÃO DAS LETRAS DAS TELAS,
+				;PARA NÃO REPETIR O CODIGO PARA CADA CARACTER IGUAL ELES FORAM CRIADOS
+				;RECEBE: NADA
+				;RETORNA: IMPRIME O CARACTER NA TELA
+				;REQUER: que antes de chamado o cursor esteja posicionado onde ele será impresso
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000012F			imprime_underline PROC
+ 0000012F  B0 5F			mov al, '_'
+ 00000131  E8 00000000 E		call WriteChar
+ 00000136  C3				ret
+ 00000137			imprime_underline ENDP
+
+ 00000137			imprime_barra PROC
+ 00000137  B0 5C			mov al, 92d
+ 00000139  E8 00000000 E		call WriteChar
+ 0000013E  C3				ret
+ 0000013F			imprime_barra ENDP
+
+ 0000013F			imprime_barra2 PROC
+ 0000013F  B0 2F			mov al, '/'
+ 00000141  E8 00000000 E		call WriteChar
+ 00000146  C3				ret
+ 00000147			imprime_barra2 ENDP
+
+ 00000147			imprime_apostrofe PROC
+ 00000147  B0 60			mov al, 96
+ 00000149  E8 00000000 E		call WriteChar
+ 0000014E  C3				ret
+ 0000014F			imprime_apostrofe ENDP
+
+ 0000014F			imprime_acento PROC
+ 0000014F  B0 EF			mov al, 239
+ 00000151  E8 00000000 E		call WriteChar
+ 00000156  C3				ret
+ 00000157			imprime_acento ENDP
+
+
+ 00000157			imprime_pipe PROC
+ 00000157  B0 7C			mov al, '|'
+ 00000159  E8 00000000 E		call WriteChar
+ 0000015E  C3				ret
+ 0000015F			imprime_pipe ENDP
+
+ 0000015F			imprime_circunflexo PROC
+ 0000015F  B0 5E			mov al, '^'
+ 00000161  E8 00000000 E		call WriteChar
+ 00000166  C3				ret
+ 00000167			imprime_circunflexo ENDP
+
+ 00000167			imprime_parentesis_dir PROC
+ 00000167  B0 29			mov al, ')'
+ 00000169  E8 00000000 E		call WriteChar
+ 0000016E  C3				ret
+ 0000016F			imprime_parentesis_dir ENDP
+
+ 0000016F			imprime_parentesis_esq PROC
+ 0000016F  B0 28			mov al, '('
+ 00000171  E8 00000000 E		call WriteChar
+ 00000176  C3				ret
+ 00000177			imprime_parentesis_esq ENDP
+
+ 00000177			imprime_traco PROC
+ 00000177  B0 2D			mov al, '-'
+ 00000179  E8 00000000 E		call WriteChar
+ 0000017E  C3				ret
+ 0000017F			imprime_traco ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000017F			desenha_opcoes_menu PROC
+				;Desenha as opções do menu principal
+				;Recebe: nada
+				;Retorna: nada
+				;Reqer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000017F  B2 23			mov dl,35
+ 00000181  B6 0B			mov dh,11
+ 00000183  E8 00000000 E		call Gotoxy
+ 00000188  BA 00000034 R		mov edx, OFFSET opcao1_mp
+ 0000018D  E8 00000000 E		call WriteString
+ 00000192  B2 23			mov dl,35
+ 00000194  B6 0D			mov dh,13
+ 00000196  E8 00000000 E		call Gotoxy
+ 0000019B  BA 00000041 R		mov edx, OFFSET opcao2_mp
+ 000001A0  E8 00000000 E		call WriteString
+ 000001A5  B2 23			mov dl,35
+ 000001A7  B6 0F			mov dh,15
+ 000001A9  E8 00000000 E		call Gotoxy
+ 000001AE  BA 0000004C R		mov edx, OFFSET opcao4_mp
+ 000001B3  E8 00000000 E		call WriteString
+ 000001B8  B2 23			mov dl,35
+ 000001BA  B6 11			mov dh,17
+ 000001BC  E8 00000000 E		call Gotoxy
+ 000001C1  BA 00000052 R		mov edx, OFFSET opcao5_mp
+ 000001C6  E8 00000000 E		call WriteString
+ 000001CB  C3				ret
+ 000001CC			desenha_opcoes_menu ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000001CC			desenha_opcoes_gameOver PROC
+				;Desenha as opções do menu de game over
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000001CC  B2 23			mov dl,35
+ 000001CE  B6 0B			mov dh,11
+ 000001D0  E8 00000000 E		call Gotoxy
+ 000001D5  BA 00000057 R		mov edx, OFFSET opcao1_mg
+ 000001DA  E8 00000000 E		call WriteString
+ 000001DF  B2 23			mov dl,35
+ 000001E1  B6 0D			mov dh,13
+ 000001E3  E8 00000000 E		call Gotoxy
+ 000001E8  BA 00000060 R		mov edx, OFFSET opcao2_mg
+ 000001ED  E8 00000000 E		call WriteString
+ 000001F2  B2 23			mov dl,35
+ 000001F4  B6 0F			mov dh,15
+ 000001F6  E8 00000000 E		call Gotoxy
+ 000001FB  BA 0000006F R		mov edx, OFFSET opcao3_mg
+ 00000200  E8 00000000 E		call WriteString
+					
+ 00000205  C3				ret
+ 00000206			desenha_opcoes_gameOver ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000206			imprime_seta_menu PROC
+				;Redesenha a seta do menu 
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000206  BA 00000074 R		mov edx, OFFSET seta_menu
+ 0000020B  E8 00000000 E		call WriteString
+ 00000210  C3			ret
+ 00000211			imprime_seta_menu ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000211			apaga_seta_menu PROC
+				;Apaga a seta do menu para ir a outra opção
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000211  BA 000001D6 R		mov edx, OFFSET blank
+ 00000216  E8 00000000 E		call WriteString
+ 0000021B  C3			ret
+ 0000021C			apaga_seta_menu ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000021C			controla_menu PROC
+				;Faz o controle do menu principal
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000021C  8A 15 000001D9 R		mov dl,seta_menu_x
+ 00000222  8A 35 000001DA R		mov dh,seta_menu_y
+ 00000228  E8 00000000 E		call Gotoxy
+ 0000022D  E8 FFFFFFD4			call imprime_seta_menu
+ 00000232			L0:
+ 00000232  B8 00000032			mov eax,50
+ 00000237  E8 00000000 E		call Delay
+ 0000023C  E8 00000000 E		call ReadKey
+ 00000241  74 EF			jz L0
+					;se foi 119, então a tela foi 'w' (UP), salta para label UP
+ 00000243  3C 77			cmp al, 119
+ 00000245  74 0E			je UP
+					;se foi 115, então a tela foi 's' (DOWN), salta para label DOWN
+ 00000247  3C 73			cmp al, 115
+ 00000249  74 51			je DOWN
+ 0000024B  3C 0D			cmp al,0Dh
+ 0000024D  0F 84 00000093		je _ENTER
+					;se não foi nenhuma das opções, salta para label L0 e tenta ler outra tecla permitida
+ 00000253  EB DD			jmp L0
+					
+ 00000255			UP:
+ 00000255  8A 15 000001D9 R		mov dl, seta_menu_x
+ 0000025B  8A 35 000001DA R		mov dh, seta_menu_y
+ 00000261  E8 00000000 E		call Gotoxy
+ 00000266  E8 FFFFFFA6			call apaga_seta_menu
+ 0000026B  80 3D 000001DA R		cmp seta_menu_y,11
+	   0B
+ 00000272  75 09			jne UP1
+ 00000274  C6 05 000001DA R		mov seta_menu_y,17
+	   11
+ 0000027B  EB 07			jmp UP2
+ 0000027D			UP1:
+ 0000027D  80 2D 000001DA R		sub seta_menu_y,2
+	   02
+ 00000284			UP2:
+ 00000284  8A 15 000001D9 R		mov dl, seta_menu_x
+ 0000028A  8A 35 000001DA R		mov dh, seta_menu_y
+ 00000290  E8 00000000 E		call Gotoxy
+ 00000295  E8 FFFFFF6C			call imprime_seta_menu
+ 0000029A  EB 96			jmp L0
+ 0000029C			DOWN:
+ 0000029C  8A 15 000001D9 R		mov dl, seta_menu_x
+ 000002A2  8A 35 000001DA R		mov dh, seta_menu_y
+ 000002A8  E8 00000000 E		call Gotoxy
+ 000002AD  E8 FFFFFF5F			call apaga_seta_menu
+ 000002B2  80 3D 000001DA R		cmp seta_menu_y,17
+	   11
+ 000002B9  75 09			jne DOWN1
+ 000002BB  C6 05 000001DA R		mov seta_menu_y,11
+	   0B
+ 000002C2  EB 07			jmp DOWN2
+ 000002C4			DOWN1:
+ 000002C4  80 05 000001DA R		add seta_menu_y,2
+	   02
+ 000002CB			DOWN2:
+ 000002CB  8A 15 000001D9 R		mov dl, seta_menu_x
+ 000002D1  8A 35 000001DA R		mov dh, seta_menu_y
+ 000002D7  E8 00000000 E		call Gotoxy
+ 000002DC  E8 FFFFFF25			call imprime_seta_menu
+ 000002E1  E9 FFFFFF4C			jmp L0
+ 000002E6			_ENTER:
+ 000002E6  80 3D 000001DA R		cmp seta_menu_y, 11
+	   0B
+ 000002ED  74 20			je _JOGO
+ 000002EF  80 3D 000001DA R		cmp seta_menu_y,13
+	   0D
+ 000002F6  74 1E			je _INSTRUCOES
+ 000002F8  80 3D 000001DA R		cmp seta_menu_y,15
+	   0F
+ 000002FF  74 26			je _SOBRE
+ 00000301  80 3D 000001DA R		cmp seta_menu_y, 17
+	   11
+ 00000308  74 2E			je _SAIR
+ 0000030A  E9 FFFFFF23			jmp L0
+					
+ 0000030F			_JOGO:
+ 0000030F  E8 0000118E				call jogo
+ 00000314  EB 37				jmp NEXT
+ 00000316			_INSTRUCOES:
+ 00000316  E8 00000000 E			call Clrscr
+ 0000031B  E8 FFFFFCFF				call desenha_tela
+ 00000320  E8 0000162C				call instrucoes
+ 00000325  EB 26				jmp NEXT
+ 00000327			_SOBRE:
+ 00000327  E8 00000000 E			call Clrscr
+ 0000032C  E8 FFFFFCEE				call desenha_tela
+ 00000331  E8 0000169B				call sobre
+ 00000336  EB 15				jmp NEXT
+ 00000338			_SAIR:	
+ 00000338  B2 00				mov dl,0
+ 0000033A  B6 1A				mov dh,26
+ 0000033C  E8 00000000 E			call Gotoxy
+ 00000341  E8 00000000 E			call Crlf
+						exit
+ 0000034D			NEXT:
+ 0000034D  C3				ret
+ 0000034E			controla_menu ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000034E			controla_menu_gameOver PROC
+				;Faz o controle do menu principal
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000034E  8A 15 000001D9 R		mov dl,seta_menu_x
+ 00000354  8A 35 000001DA R		mov dh,seta_menu_y
+ 0000035A  E8 00000000 E		call Gotoxy
+ 0000035F  E8 FFFFFEA2			call imprime_seta_menu
+ 00000364			L0:
+ 00000364  B8 00000032			mov eax,50
+ 00000369  E8 00000000 E		call Delay
+ 0000036E  E8 00000000 E		call ReadKey
+ 00000373  74 EF			jz L0
+					;se foi 119, então a tela foi 'w' (UP), salta para label UP
+ 00000375  3C 77			cmp al, 119
+ 00000377  74 0E			je UP
+					;se foi 115, então a tela foi 's' (DOWN), salta para label DOWN
+ 00000379  3C 73			cmp al, 115
+ 0000037B  74 51			je DOWN
+ 0000037D  3C 0D			cmp al,0Dh
+ 0000037F  0F 84 00000093		je _ENTER
+					;se não foi nenhuma das opções, salta para label L0 e tenta ler outra tecla permitida
+ 00000385  EB DD			jmp L0
+					
+ 00000387			UP:
+ 00000387  8A 15 000001D9 R		mov dl, seta_menu_x
+ 0000038D  8A 35 000001DA R		mov dh, seta_menu_y
+ 00000393  E8 00000000 E		call Gotoxy
+ 00000398  E8 FFFFFE74			call apaga_seta_menu
+ 0000039D  80 3D 000001DA R		cmp seta_menu_y,11
+	   0B
+ 000003A4  75 09			jne UP1
+ 000003A6  C6 05 000001DA R		mov seta_menu_y,15
+	   0F
+ 000003AD  EB 07			jmp UP2
+ 000003AF			UP1:
+ 000003AF  80 2D 000001DA R		sub seta_menu_y,2
+	   02
+ 000003B6			UP2:
+ 000003B6  8A 15 000001D9 R		mov dl, seta_menu_x
+ 000003BC  8A 35 000001DA R		mov dh, seta_menu_y
+ 000003C2  E8 00000000 E		call Gotoxy
+ 000003C7  E8 FFFFFE3A			call imprime_seta_menu
+ 000003CC  EB 96			jmp L0
+ 000003CE			DOWN:
+ 000003CE  8A 15 000001D9 R		mov dl, seta_menu_x
+ 000003D4  8A 35 000001DA R		mov dh, seta_menu_y
+ 000003DA  E8 00000000 E		call Gotoxy
+ 000003DF  E8 FFFFFE2D			call apaga_seta_menu
+ 000003E4  80 3D 000001DA R		cmp seta_menu_y,15
+	   0F
+ 000003EB  75 09			jne DOWN1
+ 000003ED  C6 05 000001DA R		mov seta_menu_y,11
+	   0B
+ 000003F4  EB 07			jmp DOWN2
+ 000003F6			DOWN1:
+ 000003F6  80 05 000001DA R		add seta_menu_y,2
+	   02
+ 000003FD			DOWN2:
+ 000003FD  8A 15 000001D9 R		mov dl, seta_menu_x
+ 00000403  8A 35 000001DA R		mov dh, seta_menu_y
+ 00000409  E8 00000000 E		call Gotoxy
+ 0000040E  E8 FFFFFDF3			call imprime_seta_menu
+ 00000413  E9 FFFFFF4C			jmp L0
+ 00000418			_ENTER:
+ 00000418  80 3D 000001DA R		cmp seta_menu_y, 11
+	   0B
+ 0000041F  74 17			je  _JOGO
+ 00000421  80 3D 000001DA R		cmp seta_menu_y, 13
+	   0D
+ 00000428  74 15			je _MENU
+ 0000042A  80 3D 000001DA R		cmp seta_menu_y, 15
+	   0F
+ 00000431  74 1D			je _SAIR
+ 00000433  E9 FFFFFF2C			jmp L0
+					
+ 00000438			_JOGO:
+ 00000438  E8 00001065				call jogo
+ 0000043D  EB 26				jmp NEXT
+ 0000043F			_MENU:
+ 0000043F  E8 00000000 E			call Clrscr
+ 00000444  E8 FFFFFBD6				call desenha_tela
+ 00000449  E8 00000018				call desenha_menu
+ 0000044E  EB 15				JMP NEXT
+ 00000450			_SAIR:	
+ 00000450  B2 00				mov dl,0
+ 00000452  B6 1A				mov dh,26
+ 00000454  E8 00000000 E			call Gotoxy
+ 00000459  E8 00000000 E			call Crlf
+						exit
+ 00000465			NEXT:
+ 00000465  C3				ret
+ 00000466			controla_menu_gameOver ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000466			desenha_menu PROC
+				;Faz o desenho do menu principal
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					INVOKE desenha_menu_F, 10,1
+					INVOKE desenha_menu_L, 18,1
+					INVOKE desenha_menu_I, 26,1
+					INVOKE desenha_menu_P, 30,1
+					INVOKE desenha_menu_F, 40,1
+					INVOKE desenha_menu_L, 48,1
+					INVOKE desenha_menu_O, 56,1
+					INVOKE desenha_menu_P, 65,1
+ 000004AE  E8 FFFFFCCC			call desenha_opcoes_menu
+ 000004B3  E8 FFFFFD64			call controla_menu
+ 000004B8  C3				ret
+ 000004B9			desenha_menu ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000004B9			desenha_menu_F PROC x:BYTE, y:BYTE
+				;Desenha a letra F nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000004BC  8A 55 08			mov dl, x
+ 000004BF  8A 75 0C			mov dh, y
+ 000004C2  E8 00000000 E		call Gotoxy
+ 000004C7  B9 00000006			mov ecx, 6
+ 000004CC			L0:
+ 000004CC  E8 FFFFFC5E			call imprime_underline
+ 000004D1  E2 F9			LOOP L0
+					
+					;Segunda linha
+ 000004D3  8A 55 08			mov dl,x
+ 000004D6  FE 45 0C			inc y
+ 000004D9  8A 75 0C			mov dh,y
+ 000004DC  E8 00000000 E		call Gotoxy
+ 000004E1  E8 FFFFFC71			call imprime_pipe
+ 000004E6  80 C2 02			add dl,2
+ 000004E9  B9 00000004			mov ecx,4
+ 000004EE			L1:
+ 000004EE  E8 00000000 E		call Gotoxy
+ 000004F3  E8 FFFFFC37			call imprime_underline
+ 000004F8  FE C2			inc dl
+ 000004FA  E2 F2			LOOP L1
+ 000004FC  E8 00000000 E		call Gotoxy
+ 00000501  E8 FFFFFC51			call imprime_pipe
+					
+					;TERCEIRA LINHA
+					
+ 00000506  8A 55 08			mov dl,x
+ 00000509  FE 45 0C			inc y
+ 0000050C  8A 75 0C			mov dh,y
+ 0000050F  E8 00000000 E		call Gotoxy
+ 00000514  E8 FFFFFC3E			call imprime_pipe
+ 00000519  80 C2 02			add dl,2
+ 0000051C  E8 00000000 E		call Gotoxy
+ 00000521  E8 FFFFFC31			call imprime_pipe
+ 00000526  FE C2			inc dl
+ 00000528  B9 00000002			mov ecx, 2
+ 0000052D			L2:
+ 0000052D  E8 00000000 E		call Gotoxy
+ 00000532  E8 FFFFFBF8			call imprime_underline
+ 00000537  FE C2			inc dl
+ 00000539  E2 F2			LOOP L2
+					
+					;QUARTA LINHA
+ 0000053B  8A 55 08			mov dl,x
+ 0000053E  FE 45 0C			inc y
+ 00000541  8A 75 0C			mov dh,y
+ 00000544  E8 00000000 E		call Gotoxy
+ 00000549  E8 FFFFFC09			call imprime_pipe
+ 0000054E  80 C2 03			add dl,3
+ 00000551  B9 00000002			mov ecx,2
+ 00000556			L3:
+ 00000556  E8 00000000 E		call Gotoxy
+ 0000055B  E8 FFFFFBCF			call imprime_underline
+ 00000560  FE C2			inc dl
+ 00000562  E2 F2			LOOP L3
+ 00000564  E8 00000000 E		call Gotoxy
+ 00000569  E8 FFFFFBE9			call imprime_pipe
+					
+					;QUINTA LINHA
+ 0000056E  8A 55 08			mov dl, x
+ 00000571  FE 45 0C			inc y
+ 00000574  8A 75 0C			mov dh, y
+ 00000577  E8 00000000 E		call Gotoxy
+ 0000057C  E8 FFFFFBD6			call imprime_pipe
+ 00000581  80 C2 02			add dl,2
+ 00000584  E8 00000000 E		call Gotoxy
+ 00000589  E8 FFFFFBC9			call imprime_pipe
+					
+					; SEXTA LINHA
+ 0000058E  8A 55 08			mov dl, x
+ 00000591  FE 45 0C			inc y
+ 00000594  8A 75 0C			mov dh,y
+ 00000597  E8 00000000 E		call Gotoxy
+ 0000059C  E8 FFFFFBB6			call imprime_pipe
+ 000005A1  B9 00000002			mov ecx,2
+ 000005A6			L4:
+ 000005A6  FE C2			inc dl
+ 000005A8  E8 00000000 E		call Gotoxy
+ 000005AD  E8 FFFFFB7D			call imprime_underline
+ 000005B2  E2 F2			LOOP L4
+ 000005B4  E8 00000000 E		call Gotoxy
+ 000005B9  E8 FFFFFB99			call imprime_pipe
+					
+					
+				ret
+ 000005C2			desenha_menu_F ENDP
+					
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000005C2			desenha_menu_L PROC x:BYTE, y:BYTE
+				;Desenha a letra L nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;Linha 1
+ 000005C5  FE 45 08			inc x
+ 000005C8  8A 55 08			mov dl,x
+ 000005CB  8A 75 0C			mov dh,y
+ 000005CE  B9 00000001			mov ecx,1
+ 000005D3				L1:
+ 000005D3  E8 00000000 E			call Gotoxy
+ 000005D8  E8 FFFFFB52				call imprime_underline
+ 000005DD  FE C2				inc dl
+ 000005DF  E2 F2				LOOP L1
+					;Linha 2
+ 000005E1  FE 4D 08			dec x
+ 000005E4  8A 55 08			mov dl,x
+ 000005E7  FE 45 0C			inc y
+ 000005EA  8A 75 0C			mov dh,y
+ 000005ED  E8 00000000 E		call Gotoxy
+ 000005F2  E8 FFFFFB60			call imprime_pipe
+ 000005F7  80 C2 02			add dl,2
+ 000005FA  E8 00000000 E		call Gotoxy
+ 000005FF  E8 FFFFFB53			call imprime_pipe
+					;Linha 3
+ 00000604  8A 55 08			mov dl,x
+ 00000607  FE 45 0C			inc y
+ 0000060A  8A 75 0C			mov dh,y
+ 0000060D  E8 00000000 E		call Gotoxy
+ 00000612  E8 FFFFFB40			call imprime_pipe
+ 00000617  80 C2 02			add dl,2
+ 0000061A  E8 00000000 E		call Gotoxy
+ 0000061F  E8 FFFFFB33			call imprime_pipe
+					;Linha 4
+ 00000624  8A 55 08			mov dl,x
+ 00000627  FE 45 0C			inc y
+ 0000062A  8A 75 0C			mov dh,y
+ 0000062D  E8 00000000 E		call Gotoxy
+ 00000632  E8 FFFFFB20			call imprime_pipe
+ 00000637  80 C2 02			add dl,2
+ 0000063A  E8 00000000 E		call Gotoxy
+ 0000063F  E8 FFFFFB13			call imprime_pipe
+					;Linha 5
+ 00000644  8A 55 08			mov dl,x
+ 00000647  FE 45 0C			inc y
+ 0000064A  8A 75 0C			mov dh,y
+ 0000064D  E8 00000000 E		call Gotoxy
+ 00000652  E8 FFFFFB00			call imprime_pipe
+ 00000657  80 C2 02			add dl,2
+ 0000065A  E8 00000000 E		call Gotoxy
+ 0000065F  B0 27			mov al, 39d
+ 00000661  E8 00000000 E		call WriteChar
+ 00000666  FE C2			inc dl
+ 00000668  B9 00000003			mov ecx,3
+ 0000066D			L5: 
+ 0000066D  E8 00000000 E		call Gotoxy
+ 00000672  B0 2D			mov al,'-'
+ 00000674  E8 00000000 E		call WriteChar
+ 00000679  FE C2			inc dl
+ 0000067B  E2 F0			LOOP L5
+ 0000067D  E8 00000000 E		call Gotoxy
+ 00000682  B0 2E			mov al, '.'
+ 00000684  E8 00000000 E		call WriteChar
+					;Linha 6
+ 00000689  8A 55 08			mov dl,x
+ 0000068C  FE 45 0C			inc y
+ 0000068F  8A 75 0C			mov dh,y
+ 00000692  E8 00000000 E		call Gotoxy
+ 00000697  E8 FFFFFABB			call imprime_pipe
+ 0000069C  FE C2			inc dl
+ 0000069E  B9 00000005			mov ecx,5
+ 000006A3			L6:	
+ 000006A3  E8 00000000 E		call Gotoxy
+ 000006A8  E8 FFFFFA82			call imprime_underline
+ 000006AD  FE C2			inc dl
+ 000006AF  E2 F2			LOOP L6
+ 000006B1  E8 00000000 E		call Gotoxy
+ 000006B6  E8 FFFFFA9C			call imprime_pipe
+
+				ret
+ 000006BF			desenha_menu_L ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000006BF			desenha_menu_I PROC x:BYTE, y:BYTE
+				;Desenha a letra I nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;Linha 1
+ 000006C2  FE 45 08			inc x
+ 000006C5  8A 55 08			mov dl,x
+ 000006C8  8A 75 0C			mov dh,y
+ 000006CB  B9 00000001			mov ecx,1
+ 000006D0			L1:
+ 000006D0  E8 00000000 E		call Gotoxy
+ 000006D5  E8 FFFFFA55			call imprime_underline
+ 000006DA  FE C2			inc dl
+ 000006DC  E2 F2			LOOP L1
+				;Linha2
+ 000006DE  FE 4D 08			dec x
+ 000006E1  8A 55 08			mov dl,x
+ 000006E4  FE 45 0C			inc y
+ 000006E7  8A 75 0C			mov dh,y
+ 000006EA  E8 00000000 E		call Gotoxy
+ 000006EF  E8 FFFFFA63			call imprime_pipe
+ 000006F4  80 C2 02			add dl, 2
+ 000006F7  E8 00000000 E		call Gotoxy
+ 000006FC  E8 FFFFFA56			call imprime_pipe
+				;Linha 3
+ 00000701  8A 55 08			mov dl,x
+ 00000704  FE 45 0C			inc y
+ 00000707  8A 75 0C			mov dh, y
+ 0000070A  E8 00000000 E		call Gotoxy
+ 0000070F  E8 FFFFFA43			call imprime_pipe
+ 00000714  80 C2 02			add dl, 2
+ 00000717  E8 00000000 E		call Gotoxy
+ 0000071C  E8 FFFFFA36			call imprime_pipe
+					
+				;Linha 4
+ 00000721  8A 55 08			mov dl,x
+ 00000724  FE 45 0C			inc y
+ 00000727  8A 75 0C			mov dh, y
+ 0000072A  E8 00000000 E		call Gotoxy
+ 0000072F  E8 FFFFFA23			call imprime_pipe
+ 00000734  80 C2 02			add dl, 2
+ 00000737  E8 00000000 E		call Gotoxy
+ 0000073C  E8 FFFFFA16			call imprime_pipe	
+				;Linha 5
+ 00000741  8A 55 08			mov dl,x
+ 00000744  FE 45 0C			inc y
+ 00000747  8A 75 0C			mov dh, y
+ 0000074A  E8 00000000 E		call Gotoxy
+ 0000074F  E8 FFFFFA03			call imprime_pipe
+ 00000754  80 C2 02			add dl, 2
+ 00000757  E8 00000000 E		call Gotoxy
+ 0000075C  E8 FFFFF9F6			call imprime_pipe	
+				;Linha 6
+ 00000761  8A 55 08			mov dl,x
+ 00000764  FE 45 0C			inc y
+ 00000767  8A 75 0C			mov dh, y
+ 0000076A  E8 00000000 E		call Gotoxy
+ 0000076F  E8 FFFFF9E3			call imprime_pipe
+ 00000774  FE C2			inc dl
+ 00000776  B9 00000001			mov ecx,1
+ 0000077B			L6:
+ 0000077B  E8 00000000 E		call Gotoxy
+ 00000780  E8 FFFFF9AA			call imprime_underline
+ 00000785  FE C2			inc dl
+ 00000787  E2 F2			LOOP L6
+ 00000789  E8 00000000 E		call Gotoxy
+ 0000078E  E8 FFFFF9C4			call imprime_pipe
+				ret
+ 00000797			desenha_menu_I ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000797			desenha_menu_P PROC x:BYTE, y:BYTE
+				;Desenha a letra P nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;Linha 1
+ 0000079A  FE 45 08			inc x
+ 0000079D  8A 55 08			mov dl,x
+ 000007A0  8A 75 0C			mov dh,y
+ 000007A3  B9 00000005			mov ecx,5
+ 000007A8			L1:	
+ 000007A8  E8 00000000 E		call Gotoxy
+ 000007AD  E8 FFFFF97D			call imprime_underline
+ 000007B2  FE C2			inc dl
+ 000007B4  E2 F2			LOOP L1
+
+				;Linha 2
+ 000007B6  FE 4D 08			dec x
+ 000007B9  8A 55 08			mov dl,x
+ 000007BC  FE 45 0C			inc y
+ 000007BF  8A 75 0C			mov dh,y
+ 000007C2  E8 00000000 E		call Gotoxy
+ 000007C7  E8 FFFFF98B			call imprime_pipe
+ 000007CC  80 C2 03			add dl,3
+ 000007CF  E8 00000000 E		call Gotoxy
+ 000007D4  E8 FFFFF956			call imprime_underline
+ 000007D9  80 C2 03			add dl,3
+ 000007DC  E8 00000000 E		call Gotoxy
+ 000007E1  E8 FFFFF951			call imprime_barra
+				; Linha 3
+ 000007E6  8A 55 08			mov dl,x
+ 000007E9  FE 45 0C			inc y
+ 000007EC  8A 75 0C			mov dh, y 
+ 000007EF  E8 00000000 E		call Gotoxy
+ 000007F4  E8 FFFFF95E			call imprime_pipe
+ 000007F9  80 C2 02			add dl,2
+ 000007FC  E8 00000000 E		call Gotoxy
+ 00000801  E8 FFFFF951			call imprime_pipe
+ 00000806  FE C2			inc dl
+ 00000808  E8 00000000 E		call Gotoxy
+ 0000080D  E8 FFFFF91D			call imprime_underline
+ 00000812  FE C2			inc dl
+ 00000814  E8 00000000 E		call Gotoxy
+ 00000819  E8 FFFFF949			call imprime_parentesis_dir
+ 0000081E  80 C2 03			add dl,3
+ 00000821  E8 00000000 E		call Gotoxy
+ 00000826  E8 FFFFF92C			call imprime_pipe
+				; Linha 4
+ 0000082B  8A 55 08			mov dl,x
+ 0000082E  FE 45 0C			inc y
+ 00000831  8A 75 0C			mov dh,y
+ 00000834  E8 00000000 E		call Gotoxy
+ 00000839  E8 FFFFF919			call imprime_pipe
+ 0000083E  80 C2 03			add dl,3
+ 00000841  B9 00000003			mov ecx,3
+ 00000846			L4:
+ 00000846  E8 00000000 E		call Gotoxy
+ 0000084B  E8 FFFFF8DF			call imprime_underline
+ 00000850  FE C2			inc dl
+ 00000852  E2 F2			LOOP L4
+ 00000854  E8 00000000 E		call Gotoxy
+ 00000859  E8 FFFFF8E1			call imprime_barra2
+				;Linha 5
+ 0000085E  8A 55 08			mov dl,x
+ 00000861  FE 45 0C			inc y 
+ 00000864  8A 75 0C			mov dh,y
+ 00000867  E8 00000000 E		call Gotoxy
+ 0000086C  E8 FFFFF8E6			call imprime_pipe
+ 00000871  80 C2 02			add dl, 2
+ 00000874  E8 00000000 E		call Gotoxy
+ 00000879  E8 FFFFF8D9			call imprime_pipe
+					
+				;Linha 6
+ 0000087E  8A 55 08			mov dl,x
+ 00000881  FE 45 0C			inc y
+ 00000884  8A 75 0C			mov dh, y
+ 00000887  E8 00000000 E		call Gotoxy
+ 0000088C  E8 FFFFF8C6			call imprime_pipe
+ 00000891  FE C2			inc dl
+ 00000893  B9 00000001			mov ecx,1
+ 00000898			L6:
+ 00000898  E8 00000000 E		call Gotoxy
+ 0000089D  E8 FFFFF88D			call imprime_underline
+ 000008A2  FE C2			inc dl
+ 000008A4  E2 F2			LOOP L6
+ 000008A6  E8 00000000 E		call Gotoxy
+ 000008AB  E8 FFFFF8A7			call imprime_pipe	
+				ret
+ 000008B4			desenha_menu_P ENDP
+
+ 000008B4			desenha_jogador PROC x:BYTE, y:BYTE
+					;linha1
+ 000008B7  8A 55 08			mov dl,x
+ 000008BA  8A 75 0C			mov dh,y
+ 000008BD  E8 00000000 E		call Gotoxy
+ 000008C2  E8 FFFFF870			call imprime_barra
+ 000008C7  80 45 08 04			add x,4
+ 000008CB  8A 55 08			mov dl,x
+ 000008CE  E8 00000000 E		call Gotoxy
+ 000008D3  B9 00000001			mov ecx,1
+ 000008D8  E8 FFFFF852		L1:	call imprime_underline
+ 000008DD  FE 45 08			inc x
+ 000008E0  E8 00000000 E		call Gotoxy
+ 000008E5  E2 F1			LOOP L1
+ 000008E7  B9 00000003			mov ecx,3
+ 000008EC  E8 FFFFF84E		L2:	call imprime_barra2
+ 000008F1  FE 45 08			inc x
+ 000008F4  E8 00000000 E		call Gotoxy
+ 000008F9  E2 F1			LOOP L2
+ 000008FB  FE 45 08			inc x
+ 000008FE  E8 FFFFF82C			call imprime_underline
+				ret
+ 00000907			desenha_jogador ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000907			desenha_menu_S PROC x:BYTE, y:BYTE
+				;Desenha a letra S nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;Linha 1
+ 0000090A  80 45 08 02			add x,2
+ 0000090E  8A 55 08			mov dl,x
+ 00000911  8A 75 0C			mov dh,y
+ 00000914  B9 00000006			mov ecx, 6
+ 00000919			L1:
+ 00000919  E8 00000000 E		call Gotoxy
+ 0000091E  E8 FFFFF80C			call imprime_underline
+ 00000923  FE C2			inc dl
+ 00000925  E2 F2			LOOP L1
+				;Linha 2
+ 00000927  FE 4D 08			dec x
+ 0000092A  8A 55 08			mov dl,x
+ 0000092D  FE 45 0C			inc y
+ 00000930  8A 75 0C			mov dh,y
+ 00000933  E8 00000000 E		call Gotoxy
+ 00000938  E8 FFFFF802			call imprime_barra2
+ 0000093D  80 C2 07			add dl,7
+ 00000940  E8 00000000 E		call Gotoxy
+ 00000945  E8 FFFFF80D			call imprime_pipe
+				;Linha 3
+ 0000094A  FE 4D 08			dec x
+ 0000094D  8A 55 08			mov dl,x
+ 00000950  FE 45 0C			inc y
+ 00000953  8A 75 0C			mov dh,y
+ 00000956  E8 00000000 E		call Gotoxy
+ 0000095B  E8 FFFFF7F7			call imprime_pipe
+ 00000960  80 C2 03			add dl,3
+ 00000963  E8 00000000 E		call Gotoxy
+ 00000968  E8 FFFFF802			call imprime_parentesis_esq
+ 0000096D  FE C2			inc dl
+ 0000096F  B9 00000004			mov ecx,4
+ 00000974			L3:
+ 00000974  E8 00000000 E		call Gotoxy
+ 00000979  E8 FFFFF7F9			call imprime_traco
+ 0000097E  FE C2			inc dl
+ 00000980  E2 F2			LOOP L3
+ 00000982  E8 00000000 E		call Gotoxy
+ 00000987  B0 60			mov al,96d
+ 00000989  E8 00000000 E		call WriteChar
+				;Linha 4
+ 0000098E  FE 45 08			inc x
+ 00000991  8A 55 08			mov dl,x
+ 00000994  FE 45 0C			inc y
+ 00000997  8A 75 0C			mov dh,y
+ 0000099A  E8 00000000 E		call Gotoxy
+ 0000099F  E8 FFFFF793			call imprime_barra
+ 000009A4  80 C2 03			add dl,3
+ 000009A7  E8 00000000 E		call Gotoxy
+ 000009AC  E8 FFFFF786			call imprime_barra
+				;Linha 5
+ 000009B1  80 6D 08 03			sub x,3
+ 000009B5  8A 55 08			mov dl,x
+ 000009B8  FE 45 0C			inc y 
+ 000009BB  8A 75 0C			mov dh,y
+ 000009BE  B9 00000003			mov ecx,3
+ 000009C3			L5:
+ 000009C3  E8 00000000 E		call Gotoxy
+ 000009C8  E8 FFFFF7AA			call imprime_traco
+ 000009CD  FE C2			inc dl
+ 000009CF  E2 F2			LOOP L5
+ 000009D1  E8 00000000 E		call Gotoxy
+ 000009D6  E8 FFFFF78C			call imprime_parentesis_dir
+ 000009DB  80 C2 03			add dl,3
+ 000009DE  E8 00000000 E		call Gotoxy
+ 000009E3  E8 FFFFF76F			call imprime_pipe
+				;Linha 6
+ 000009E8  FE 4D 08			dec x
+ 000009EB  8A 55 08			mov dl,x
+ 000009EE  FE 45 0C			inc y 
+ 000009F1  8A 75 0C			mov dh,y 
+ 000009F4  E8 00000000 E		call Gotoxy
+ 000009F9  E8 FFFFF759			call imprime_pipe
+ 000009FE  FE C2			inc dl
+ 00000A00  B9 00000006			mov ecx,6
+ 00000A05			L6:
+ 00000A05  E8 00000000 E		call Gotoxy
+ 00000A0A  E8 FFFFF720			call imprime_underline
+ 00000A0F  FE C2			inc dl
+ 00000A11  E2 F2			LOOP L6
+ 00000A13  E8 00000000 E		call Gotoxy
+ 00000A18  E8 FFFFF722			call imprime_barra2
+					ret
+ 00000A21			desenha_menu_S ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000A21			desenha_menu_H PROC x:BYTE, y:BYTE
+				;Desenha a letra H nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000A24  FE 45 08		    inc x
+ 00000A27  8A 55 08			mov dl,x
+ 00000A2A  8A 75 0C			mov dh,y
+ 00000A2D  B9 00000001			mov ecx,1
+ 00000A32			L1:
+ 00000A32  E8 00000000 E		call Gotoxy
+ 00000A37  E8 FFFFF6F3			call imprime_underline
+ 00000A3C  FE C2			inc dl
+ 00000A3E  E2 F2			LOOP L1
+ 00000A40  80 C2 03			add dl,3
+ 00000A43  B9 00000001			mov ecx,1
+ 00000A48			L12:
+ 00000A48  E8 00000000 E		call Gotoxy
+ 00000A4D  E8 FFFFF6DD			call imprime_underline
+ 00000A52  FE C2			inc dl
+ 00000A54  E2 F2			LOOP L12
+					
+				;LINHA 2
+ 00000A56  FE 4D 08			dec x
+ 00000A59  8A 55 08			mov dl,x
+ 00000A5C  FE 45 0C			inc y 
+ 00000A5F  8A 75 0C			mov dh,y
+ 00000A62  B9 00000004			mov ecx,4
+ 00000A67			L2:
+ 00000A67  E8 00000000 E		call Gotoxy
+ 00000A6C  E8 FFFFF6E6			call imprime_pipe
+ 00000A71  80 C2 02			add dl,2
+ 00000A74  E2 F1			LOOP L2
+					
+				; LINHA 3
+ 00000A76  8A 55 08			mov dl,x
+ 00000A79  FE 45 0C			inc y 
+ 00000A7C  8A 75 0C			mov dh,y
+ 00000A7F  B9 00000002			mov ecx, 2
+ 00000A84			L3: 
+ 00000A84  E8 00000000 E		call Gotoxy
+ 00000A89  E8 FFFFF6C9			call imprime_pipe
+ 00000A8E  80 C2 02			add dl,2
+ 00000A91  E2 F1			LOOP L3
+ 00000A93  FE CA			dec dl
+ 00000A95  B9 00000001			mov ecx,1
+					
+ 00000A9A			L31:
+ 00000A9A  E8 00000000 E		call Gotoxy
+ 00000A9F  E8 FFFFF68B			call imprime_underline
+ 00000AA4  FE C2			inc dl
+ 00000AA6  E2 F2			LOOP L31
+ 00000AA8  B9 00000002			mov ecx,2
+ 00000AAD			L32: 
+ 00000AAD  E8 00000000 E		call Gotoxy
+ 00000AB2  E8 FFFFF6A0			call imprime_pipe
+ 00000AB7  80 C2 02			add dl,2
+ 00000ABA  E2 F1			LOOP L32
+					
+				; LINHA 4
+ 00000ABC  8A 55 08			mov dl,x
+ 00000ABF  FE 45 0C			inc y 
+ 00000AC2  8A 75 0C			mov dh,y
+ 00000AC5  E8 00000000 E		call Gotoxy
+ 00000ACA  E8 FFFFF688			call imprime_pipe
+ 00000ACF  80 C2 03			add dl,3
+ 00000AD2  B9 00000001			mov ecx,1
+ 00000AD7			L4:
+ 00000AD7  E8 00000000 E		call Gotoxy
+ 00000ADC  E8 FFFFF64E			call imprime_underline
+ 00000AE1  FE C2			inc dl
+ 00000AE3  E2 F2			LOOP L4
+ 00000AE5  80 C2 02			add dl,2
+ 00000AE8  E8 00000000 E		call Gotoxy
+ 00000AED  E8 FFFFF665			call imprime_pipe
+					
+				;LINHA 5
+ 00000AF2  8A 55 08			mov dl,x
+ 00000AF5  FE 45 0C			inc y 
+ 00000AF8  8A 75 0C			mov dh,y
+ 00000AFB  B9 00000002			mov ecx, 2
+ 00000B00			L5: 
+ 00000B00  E8 00000000 E		call Gotoxy
+ 00000B05  E8 FFFFF64D			call imprime_pipe
+ 00000B0A  80 C2 02			add dl,2
+ 00000B0D  E2 F1			LOOP L5
+ 00000B0F  B9 00000002			mov ecx,2
+ 00000B14			L51:
+ 00000B14  E8 00000000 E	 	call Gotoxy
+ 00000B19  E8 FFFFF639			call imprime_pipe
+ 00000B1E  80 C2 02			add dl,2
+ 00000B21  E2 F1			LOOP L51
+					
+				;LINHA 6
+ 00000B23  8A 55 08			mov dl,x
+ 00000B26  FE 45 0C			inc y 
+ 00000B29  8A 75 0C			mov dh,y
+ 00000B2C  E8 00000000 E		call Gotoxy
+ 00000B31  E8 FFFFF621			call imprime_pipe
+ 00000B36  FE C2			inc dl
+ 00000B38  E8 00000000 E		call Gotoxy
+ 00000B3D  E8 FFFFF5ED			call imprime_underline
+ 00000B42  FE C2			inc dl
+ 00000B44  E8 00000000 E		call Gotoxy
+ 00000B49  E8 FFFFF609			call imprime_pipe
+ 00000B4E  80 C2 02			add dl,2
+ 00000B51  E8 00000000 E		call Gotoxy
+ 00000B56  E8 FFFFF5FC			call imprime_pipe
+ 00000B5B  B9 00000001			mov ecx,1
+ 00000B60  FE C2			inc dl
+ 00000B62  E8 00000000 E		call Gotoxy
+ 00000B67  E8 FFFFF5C3			call imprime_underline
+ 00000B6C  FE C2			inc dl 
+ 00000B6E  E8 00000000 E		call Gotoxy
+ 00000B73  E8 FFFFF5DF			call imprime_pipe
+
+				ret
+ 00000B7C			desenha_menu_H ENDP
+					
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000B7C			desenha_menu_G PROC x:BYTE, y:BYTE
+				;Desenha a letra G nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000B7F  8A 55 08			mov dl,x
+ 00000B82  FE C2			inc dl
+ 00000B84  8A 75 0C			mov dh,y
+ 00000B87  E8 00000000 E		call Gotoxy
+ 00000B8C  B9 00000007			mov ecx,7
+				;linha 1
+ 00000B91			L1:
+ 00000B91  E8 FFFFF599			call imprime_underline
+ 00000B96  E2 F9			loop L1
+				;linha 2
+ 00000B98  FE C6			inc dh
+ 00000B9A  FE CA			dec dl
+ 00000B9C  E8 00000000 E		call Gotoxy
+ 00000BA1  E8 FFFFF599			call imprime_barra2
+ 00000BA6  80 C2 02			add dl,2
+ 00000BA9  E8 00000000 E		call Gotoxy
+ 00000BAE  B9 00000006			mov ecx,6
+ 00000BB3			L2:
+ 00000BB3  E8 FFFFF577			call imprime_underline
+ 00000BB8  FE C2			inc dl
+ 00000BBA  E8 00000000 E		call Gotoxy
+ 00000BBF  E2 F2			loop L2
+ 00000BC1  E8 00000000 E		call Gotoxy
+ 00000BC6  E8 FFFFF58C			call imprime_pipe
+				;linha 3
+ 00000BCB  FE C6			inc dh
+ 00000BCD  FE 4D 08			dec x
+ 00000BD0  8A 55 08			mov dl,x
+ 00000BD3  E8 00000000 E		call Gotoxy
+ 00000BD8  E8 FFFFF57A			call imprime_pipe
+ 00000BDD  80 C2 03			add dl,3
+ 00000BE0  E8 00000000 E		call Gotoxy
+ 00000BE5  E8 FFFFF56D			call imprime_pipe
+ 00000BEA  80 C2 03			add dl,3
+ 00000BED  B9 00000002			mov ecx,2
+ 00000BF2  E8 00000000 E	L3:	call Gotoxy
+ 00000BF7  E8 FFFFF533			call imprime_underline
+ 00000BFC  FE C2			inc dl
+ 00000BFE  E2 F2			LOOP L3
+				;linha 4
+ 00000C00  FE C6			inc dh
+ 00000C02  8A 55 08			mov dl,x
+ 00000C05  E8 00000000 E		call Gotoxy
+ 00000C0A  E8 FFFFF548			call imprime_pipe
+ 00000C0F  80 C2 03			add dl,3
+ 00000C12  E8 00000000 E		call Gotoxy
+ 00000C17  E8 FFFFF53B			call imprime_pipe
+ 00000C1C  80 C2 02			add dl,2
+ 00000C1F  E8 00000000 E		call Gotoxy
+ 00000C24  E8 FFFFF52E			call imprime_pipe
+ 00000C29  FE C2			inc dl
+ 00000C2B  E8 00000000 E		call Gotoxy
+ 00000C30  E8 FFFFF4FA			call imprime_underline
+ 00000C35  80 C2 02			add dl,2
+ 00000C38  E8 00000000 E		call Gotoxy
+ 00000C3D  E8 FFFFF515			call imprime_pipe
+				;linha 5
+ 00000C42  FE C6			inc dh
+ 00000C44  8A 55 08			mov dl,x
+ 00000C47  E8 00000000 E		call Gotoxy
+ 00000C4C  E8 FFFFF506			call imprime_pipe
+ 00000C51  80 C2 03			add dl,3
+ 00000C54  E8 00000000 E		call Gotoxy
+ 00000C59  E8 FFFFF4F9			call imprime_pipe
+ 00000C5E  B9 00000002			mov ecx,2
+ 00000C63  FE C2			inc dl
+ 00000C65			L5: 
+ 00000C65  E8 00000000 E		call Gotoxy
+ 00000C6A  E8 FFFFF4C0			call imprime_underline
+ 00000C6F  FE C2			inc dl
+ 00000C71  E2 F2		loop L5
+ 00000C73  E8 00000000 E		call Gotoxy
+ 00000C78  E8 FFFFF4DA			call imprime_pipe
+ 00000C7D  80 C2 02			add dl,2
+ 00000C80  E8 00000000 E		call Gotoxy
+ 00000C85  E8 FFFFF4CD			call imprime_pipe
+				;linha 6
+ 00000C8A  FE 45 08			inc x
+ 00000C8D  8A 55 08			mov dl,x
+ 00000C90  FE C6			inc dh
+ 00000C92  E8 00000000 E		call Gotoxy
+ 00000C97  E8 FFFFF49B			call imprime_barra
+ 00000C9C  B9 00000006			mov ecx,6
+ 00000CA1  FE C2			inc dl
+ 00000CA3			L6:
+ 00000CA3  E8 00000000 E		call Gotoxy
+ 00000CA8  E8 FFFFF482			call imprime_underline
+ 00000CAD  FE C2			inc dl
+ 00000CAF  E2 F2		loop L6
+ 00000CB1  E8 00000000 E	    call Gotoxy
+ 00000CB6  E8 FFFFF49C			call imprime_pipe	
+				ret
+ 00000CBF			desenha_menu_G ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000CBF			desenha_menu_A PROC x:BYTE, y:BYTE
+				;Desenha a letra A nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000CC2  8A 55 08			mov dl,x
+ 00000CC5  80 C2 05			add dl,5
+ 00000CC8  8A 75 0C			mov dh,y
+ 00000CCB  B9 00000003			mov ecx,3
+				;LINHA 1
+ 00000CD0			L1:
+ 00000CD0  E8 00000000 E		call Gotoxy
+ 00000CD5  E8 FFFFF455			call imprime_underline
+ 00000CDA  FE C2			inc dl
+ 00000CDC  E2 F2			loop L1
+				;LINHA 2
+ 00000CDE  FE C6			inc dh
+ 00000CE0  8A 55 08			mov dl,x
+ 00000CE3  80 C2 04			add dl,4
+ 00000CE6  E8 00000000 E		call Gotoxy
+ 00000CEB  E8 FFFFF44F			call imprime_barra2
+ 00000CF0  80 C2 04			add dl,4
+ 00000CF3  E8 00000000 E		call Gotoxy
+ 00000CF8  E8 FFFFF43A			call imprime_barra
+				;LINHA 3
+ 00000CFD  FE C6			inc dh
+ 00000CFF  8A 55 08			mov dl,x
+ 00000D02  80 C2 03			add dl,3
+ 00000D05  E8 00000000 E		call Gotoxy
+ 00000D0A  E8 FFFFF448			call imprime_pipe
+ 00000D0F  80 C2 03			add dl,3
+ 00000D12  E8 00000000 E		call Gotoxy
+ 00000D17  E8 FFFFF443			call imprime_circunflexo
+ 00000D1C  80 C2 03			add dl,3
+ 00000D1F  E8 00000000 E		call Gotoxy
+ 00000D24  E8 FFFFF42E			call imprime_pipe
+				;LINHA 4
+ 00000D29  FE C6			inc dh
+ 00000D2B  8A 55 08			mov dl,x
+ 00000D2E  80 C2 03			add dl,3
+ 00000D31  E8 00000000 E		call Gotoxy
+ 00000D36  E8 FFFFF41C			call imprime_pipe
+ 00000D3B  80 C2 02			add dl,2
+ 00000D3E  E8 00000000 E		call Gotoxy
+ 00000D43  E8 FFFFF40F			call imprime_pipe
+ 00000D48  FE C2			inc dl
+ 00000D4A  E8 00000000 E		call Gotoxy
+ 00000D4F  E8 FFFFF3DB			call imprime_underline
+ 00000D54  FE C2			inc dl
+ 00000D56  E8 00000000 E		call Gotoxy
+ 00000D5B  E8 FFFFF3F7			call imprime_pipe
+ 00000D60  80 C2 02			add dl,2
+ 00000D63  E8 00000000 E		call Gotoxy
+ 00000D68  E8 FFFFF3EA			call imprime_pipe
+				;LINHA 5
+ 00000D6D  FE C6			inc dh
+ 00000D6F  8A 55 08			mov dl,x
+ 00000D72  80 C2 03			add dl,3
+ 00000D75  E8 00000000 E		call Gotoxy
+ 00000D7A  E8 FFFFF3D8			call imprime_pipe
+ 00000D7F  80 C2 03			add dl,3
+ 00000D82  E8 00000000 E		call Gotoxy
+ 00000D87  B9 00000001			mov ecx,1
+ 00000D8C			L5:
+ 00000D8C  E8 FFFFF39E			call imprime_underline
+ 00000D91  FE C2			inc dl
+ 00000D93  E8 00000000 E		call Gotoxy
+ 00000D98  E2 F2		loop L5
+ 00000D9A  80 C2 02			add dl,2
+ 00000D9D  E8 00000000 E		call Gotoxy
+ 00000DA2  E8 FFFFF3B0			call imprime_pipe
+ 00000DA7  FE C6			inc dh
+				;LINHA 6
+ 00000DA9  8A 55 08			mov dl,x
+ 00000DAC  80 C2 03			add dl,3
+ 00000DAF  E8 00000000 E		call Gotoxy
+ 00000DB4  E8 FFFFF39E			call imprime_pipe
+ 00000DB9  FE C2			inc dl
+ 00000DBB  E8 00000000 E		call Gotoxy
+ 00000DC0  E8 FFFFF36A			call imprime_underline
+ 00000DC5  FE C2			inc dl
+ 00000DC7  E8 00000000 E		call Gotoxy
+ 00000DCC  E8 FFFFF386			call imprime_pipe
+ 00000DD1  80 C2 02			add dl,2
+ 00000DD4  E8 00000000 E		call Gotoxy
+ 00000DD9  E8 FFFFF379			call imprime_pipe
+ 00000DDE  FE C2			inc dl
+ 00000DE0  E8 00000000 E		call Gotoxy
+ 00000DE5  E8 FFFFF345			call imprime_underline
+ 00000DEA  FE C2			inc dl
+ 00000DEC  E8 00000000 E		call Gotoxy
+ 00000DF1  E8 FFFFF361			call imprime_pipe
+				ret
+					
+ 00000DFA			desenha_menu_A ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000DFA			desenha_menu_M PROC x:BYTE, y:BYTE
+				;Desenha a letra M nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;LINHA 1
+ 00000DFD  8A 55 08			mov dl,x
+ 00000E00  FE C2			inc dl
+ 00000E02  8A 75 0C			mov dh,y
+ 00000E05  B9 00000003			mov ecx,3
+ 00000E0A  E8 00000000 E	L1:	call Gotoxy
+ 00000E0F  E8 FFFFF31B			call imprime_underline
+ 00000E14  FE C2			inc dl
+ 00000E16  E2 F2			loop L1
+ 00000E18  80 C2 02			add dl,2
+ 00000E1B  E8 00000000 E		call Gotoxy
+ 00000E20  B9 00000003			mov ecx,3
+ 00000E25  E8 FFFFF305		L11: call imprime_underline
+ 00000E2A  FE C2			 inc dl
+ 00000E2C  E8 00000000 E		 call Gotoxy
+ 00000E31  E2 F2			 loop L11
+				;linha2
+ 00000E33  FE C6			inc dh
+ 00000E35  8A 55 08			mov dl,x
+ 00000E38  E8 00000000 E		call Gotoxy
+ 00000E3D  E8 FFFFF315			call imprime_pipe
+ 00000E42  80 C2 04			add dl,4
+ 00000E45  E8 00000000 E		call Gotoxy
+ 00000E4A  E8 FFFFF2E8			call imprime_barra
+ 00000E4F  FE C2			inc dl
+ 00000E51  E8 00000000 E		call Gotoxy
+ 00000E56  E8 FFFFF2E4			call imprime_barra2
+ 00000E5B  80 C2 04			add dl,4
+ 00000E5E  E8 00000000 E		call Gotoxy
+ 00000E63  E8 FFFFF2EF			call imprime_pipe
+				;linha 3
+ 00000E68  FE C6			inc dh
+ 00000E6A  8A 55 08			mov dl,x
+ 00000E6D  E8 00000000 E		call Gotoxy
+ 00000E72  E8 FFFFF2E0			call imprime_pipe
+ 00000E77  80 C2 03			add dl,3
+ 00000E7A  E8 00000000 E		call Gotoxy
+ 00000E7F  E8 FFFFF2B3			call imprime_barra
+ 00000E84  80 C2 03			add dl,3
+ 00000E87  E8 00000000 E		call Gotoxy
+ 00000E8C  E8 FFFFF2AE			call imprime_barra2
+ 00000E91  80 C2 03			add dl,3
+ 00000E94  E8 00000000 E		call Gotoxy
+ 00000E99  E8 FFFFF2B9			call imprime_pipe
+				;linha 4
+ 00000E9E  FE C6			inc dh
+ 00000EA0  8A 55 08			mov dl,x
+ 00000EA3  E8 00000000 E		call Gotoxy
+ 00000EA8  E8 FFFFF2AA			call imprime_pipe
+ 00000EAD  80 C2 03			add dl,3
+ 00000EB0  E8 00000000 E		call Gotoxy
+ 00000EB5  E8 FFFFF29D			call imprime_pipe
+ 00000EBA  FE C2			inc dl
+ 00000EBC  E8 00000000 E		call Gotoxy
+ 00000EC1  E8 FFFFF271			call imprime_barra
+ 00000EC6  FE C2			inc dl
+ 00000EC8  E8 00000000 E		call Gotoxy
+ 00000ECD  E8 FFFFF26D			call imprime_barra2
+ 00000ED2  FE C2			inc dl
+ 00000ED4  E8 00000000 E		call Gotoxy
+ 00000ED9  E8 FFFFF279			call imprime_pipe
+ 00000EDE  80 C2 03			add dl,3
+ 00000EE1  E8 00000000 E		call Gotoxy
+ 00000EE6  E8 FFFFF26C			call imprime_pipe
+				;linha 5
+ 00000EEB  FE C6			inc dh
+ 00000EED  8A 55 08			mov dl,x
+ 00000EF0  E8 00000000 E		call Gotoxy
+ 00000EF5  E8 FFFFF25D			call imprime_pipe
+ 00000EFA  B9 00000003			mov ecx,3
+ 00000EFF  80 C2 03		L5: add dl,3
+ 00000F02  E8 00000000 E		call Gotoxy
+ 00000F07  E8 FFFFF24B			call imprime_pipe
+ 00000F0C  E2 F1			loop L5
+				;linha 6
+ 00000F0E  FE C6			inc dh
+ 00000F10  8A 55 08			mov dl,x
+ 00000F13  E8 00000000 E		call Gotoxy
+ 00000F18  E8 FFFFF23A			call imprime_pipe
+ 00000F1D  FE C2			inc dl
+ 00000F1F  E8 00000000 E		call Gotoxy
+ 00000F24  E8 FFFFF206			call imprime_underline
+ 00000F29  FE C2			inc dl
+ 00000F2B  E8 00000000 E		call Gotoxy
+ 00000F30  E8 FFFFF1FA			call imprime_underline
+ 00000F35  FE C2			inc dl 
+ 00000F37  E8 00000000 E		call Gotoxy
+ 00000F3C  E8 FFFFF216			call imprime_pipe
+ 00000F41  80 C2 03			add dl,3
+ 00000F44  E8 00000000 E		call Gotoxy
+ 00000F49  E8 FFFFF209			call imprime_pipe
+ 00000F4E  FE C2			inc dl
+ 00000F50  E8 00000000 E		call Gotoxy
+ 00000F55  E8 FFFFF1D5			call imprime_underline
+ 00000F5A  FE C2			inc dl
+ 00000F5C  E8 00000000 E		call Gotoxy
+ 00000F61  E8 FFFFF1C9			call imprime_underline
+ 00000F66  FE C2			inc dl
+ 00000F68  E8 00000000 E		call Gotoxy
+ 00000F6D  E8 FFFFF1E5			call imprime_pipe
+				ret
+ 00000F76			desenha_menu_M ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000F76			desenha_menu_E PROC x:BYTE, y:BYTE
+				;Desenha a letra E nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;linha 1
+ 00000F79  8A 55 08			mov dl,x
+ 00000F7C  8A 75 0C			mov dh,y
+ 00000F7F  FE C2			inc dl
+ 00000F81  E8 00000000 E		call Gotoxy
+ 00000F86  B9 00000007			mov ecx,7
+ 00000F8B			L1:
+ 00000F8B  E8 FFFFF19F			call imprime_underline
+ 00000F90  FE C2			inc dl
+ 00000F92  E8 00000000 E		call Gotoxy
+ 00000F97  E2 F2			loop L1
+				;linha 2
+ 00000F99  FE C6			inc dh
+ 00000F9B  8A 55 08			mov dl,x
+ 00000F9E  E8 00000000 E		call Gotoxy
+ 00000FA3  E8 FFFFF1AF			call imprime_pipe
+ 00000FA8  80 C2 04			add dl,4
+ 00000FAB  E8 00000000 E		call Gotoxy
+ 00000FB0  B9 00000004			mov ecx,4
+ 00000FB5			L2:
+ 00000FB5  E8 FFFFF175			call imprime_underline
+ 00000FBA  FE C2			inc dl
+ 00000FBC  E8 00000000 E		call Gotoxy
+ 00000FC1  E2 F2			loop L2
+ 00000FC3  E8 FFFFF18F			call imprime_pipe
+				;linha 3
+ 00000FC8  FE C6			inc dh
+ 00000FCA  8A 55 08			mov dl,x
+ 00000FCD  E8 00000000 E		call Gotoxy
+ 00000FD2  E8 FFFFF180			call imprime_pipe
+ 00000FD7  80 C2 03			add dl,3
+ 00000FDA  E8 00000000 E		call Gotoxy
+ 00000FDF  E8 FFFFF173			call imprime_pipe
+ 00000FE4  FE C2			inc dl
+ 00000FE6  E8 00000000 E		call Gotoxy
+ 00000FEB  E8 FFFFF13F			call imprime_underline
+ 00000FF0  FE C2			inc dl
+ 00000FF2  E8 00000000 E		call Gotoxy
+ 00000FF7  E8 FFFFF133			call imprime_underline
+				;linha 4
+ 00000FFC  FE C6			inc dh
+ 00000FFE  8A 55 08			mov dl,x
+ 00001001  E8 00000000 E		call Gotoxy
+ 00001006  E8 FFFFF14C			call imprime_pipe
+ 0000100B  80 C2 04			add dl,4
+ 0000100E  E8 00000000 E		call Gotoxy
+ 00001013  E8 FFFFF117			call imprime_underline
+ 00001018  FE C2			inc dl
+ 0000101A  E8 00000000 E		call Gotoxy
+ 0000101F  E8 FFFFF10B			call imprime_underline
+ 00001024  FE C2			inc dl
+ 00001026  E8 00000000 E		call Gotoxy
+ 0000102B  E8 FFFFF127			call imprime_pipe
+				;linha 5
+ 00001030  FE C6			inc dh
+ 00001032  8A 55 08			mov dl,x
+ 00001035  E8 00000000 E		call Gotoxy
+ 0000103A  E8 FFFFF118			call imprime_pipe
+ 0000103F  80 C2 03			add dl,3
+ 00001042  E8 00000000 E		call Gotoxy
+ 00001047  E8 FFFFF10B			call imprime_pipe
+ 0000104C  B9 00000004			mov ecx,4
+ 00001051			L5:
+ 00001051  FE C2			inc dl
+ 00001053  E8 00000000 E		call Gotoxy
+ 00001058  E8 FFFFF0D2			call imprime_underline
+ 0000105D  E2 F2			loop L5
+				;linha 6
+ 0000105F  FE C6			inc dh
+ 00001061  8A 55 08			mov dl,x
+ 00001064  E8 00000000 E		call Gotoxy
+ 00001069  E8 FFFFF0E9			call imprime_pipe
+ 0000106E  B9 00000007			mov ecx,7
+ 00001073			L6:
+ 00001073  FE C2			inc dl
+ 00001075  E8 00000000 E		call Gotoxy
+ 0000107A  E8 FFFFF0B0			call imprime_underline
+ 0000107F  E2 F2			loop l6
+ 00001081  FE C2			inc dl
+ 00001083  E8 00000000 E		call Gotoxy
+ 00001088  E8 FFFFF0CA			call imprime_pipe
+					
+				ret
+ 00001091			desenha_menu_E ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001091			desenha_menu_O PROC x:BYTE, y:BYTE
+				;Desenha a letra O nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001094  8A 55 08			mov dl,x
+ 00001097  8A 75 0C			mov dh,y 
+ 0000109A  80 C2 02			add dl,2
+ 0000109D  E8 00000000 E		call Gotoxy
+ 000010A2  B9 00000006			mov ecx,6
+ 000010A7			L1:
+ 000010A7  E8 FFFFF083			call imprime_underline
+ 000010AC  FE C2			inc dl
+ 000010AE  E8 00000000 E		call Gotoxy
+ 000010B3  E2 F2			loop L1
+				;linha 2
+ 000010B5  FE C6			inc dh
+ 000010B7  8A 55 08			mov dl,x 
+ 000010BA  FE C2			inc dl 
+ 000010BC  E8 00000000 E		call Gotoxy
+ 000010C1  E8 FFFFF079			call imprime_barra2
+ 000010C6  80 C2 03			add dl,3
+ 000010C9  E8 00000000 E		call Gotoxy
+ 000010CE  E8 FFFFF05C			call imprime_underline
+ 000010D3  FE C2			inc dl
+ 000010D5  E8 00000000 E		call Gotoxy
+ 000010DA  E8 FFFFF050			call imprime_underline
+ 000010DF  80 C2 03			add dl,3
+ 000010E2  E8 00000000 E		call Gotoxy
+ 000010E7  E8 FFFFF04B			call imprime_barra
+				;linha 3 e linha 4
+ 000010EC  B9 00000002		mov ecx,2
+ 000010F1			L34:
+ 000010F1  FE C6			inc dh
+ 000010F3  8A 55 08			mov dl,x 
+ 000010F6  E8 00000000 E		call Gotoxy
+ 000010FB  E8 FFFFF057			call imprime_pipe
+ 00001100  51				push ecx
+ 00001101  B9 00000003			mov ecx,3
+ 00001106			L3:
+ 00001106  80 C2 03			add dl,3
+ 00001109  E8 00000000 E		call Gotoxy
+ 0000110E  E8 FFFFF044			call imprime_pipe
+ 00001113  E2 F1			loop L3
+ 00001115  59				pop ecx
+ 00001116  E2 D9			loop L34
+				;linha 5
+ 00001118  FE C6			inc dh
+ 0000111A  8A 55 08			mov dl,x 
+ 0000111D  E8 00000000 E		call Gotoxy
+ 00001122  E8 FFFFF030			call imprime_pipe
+ 00001127  80 C2 03			add dl,3
+ 0000112A  E8 00000000 E		call Gotoxy
+ 0000112F  E8 FFFFF013			call imprime_apostrofe
+ 00001134  FE C2			inc dl
+ 00001136  E8 00000000 E		call Gotoxy
+ 0000113B  B9 00000002			mov ecx,2
+ 00001140			L5:
+ 00001140  E8 FFFFF032			call imprime_traco
+ 00001145  FE C2			inc dl
+ 00001147  E8 00000000 E		call Gotoxy
+ 0000114C  E2 F2			loop L5
+ 0000114E  E8 FFFFEFFC			call imprime_acento
+ 00001153  80 C2 03			add dl,3
+ 00001156  E8 00000000 E		call Gotoxy
+ 0000115B  E8 FFFFEFF7			call imprime_pipe
+				;linha 6
+ 00001160  FE C6			inc dh
+ 00001162  8A 55 08			mov dl,x 
+ 00001165  FE C2			inc dl
+ 00001167  E8 00000000 E		call Gotoxy
+ 0000116C  E8 FFFFEFC6			call imprime_barra
+ 00001171  B9 00000006			mov ecx,6
+ 00001176			L6:
+ 00001176  FE C2			inc dl
+ 00001178  E8 00000000 E		call Gotoxy
+ 0000117D  E8 FFFFEFAD			call imprime_underline
+ 00001182  E2 F2			loop L6
+ 00001184  FE C2			inc dl
+ 00001186  E8 00000000 E		call Gotoxy
+ 0000118B  E8 FFFFEFAF			call imprime_barra2
+				ret
+ 00001194			desenha_menu_O ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001194			desenha_menu_V PROC x:BYTE, y:BYTE
+				;Desenha a letra V nas coordenadas especificas recebidas
+				;Recebe: coordenadas x e y
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001197  8A 55 08			mov dl,x
+ 0000119A  8A 75 0C			mov dh,y 
+ 0000119D  FE C2			inc dl
+ 0000119F  E8 00000000 E		call Gotoxy
+ 000011A4  B9 00000003			mov ecx,3
+ 000011A9			L1: 
+ 000011A9  E8 FFFFEF81			call imprime_underline
+ 000011AE  FE C2			inc dl
+ 000011B0  E8 00000000 E		call Gotoxy
+ 000011B5  E2 F2			loop L1
+ 000011B7  80 C2 04			add dl, 4
+ 000011BA  E8 00000000 E		call Gotoxy
+ 000011BF  B9 00000003			mov ecx,3
+ 000011C4			L11:
+ 000011C4  E8 FFFFEF66			call imprime_underline
+ 000011C9  FE C2			inc dl
+ 000011CB  E8 00000000 E		call Gotoxy
+ 000011D0  E2 F2			loop L11
+				;linha 2
+ 000011D2  FE C6		    inc dh
+ 000011D4  8A 55 08			mov dl,x 
+ 000011D7  FE C2			inc dl
+ 000011D9  E8 00000000 E		call Gotoxy
+ 000011DE  E8 FFFFEF54			call imprime_barra
+ 000011E3  80 C2 03			add dl,3
+ 000011E6  E8 00000000 E		call Gotoxy
+ 000011EB  E8 FFFFEF47			call imprime_barra
+ 000011F0  80 C2 03			add dl,3
+ 000011F3  E8 00000000 E		call Gotoxy
+ 000011F8  E8 FFFFEF42			call imprime_barra2
+ 000011FD  80 C2 03			add dl,3
+ 00001200  E8 00000000 E		call Gotoxy
+ 00001205  E8 FFFFEF35			call imprime_barra2
+				;linha 3
+ 0000120A  FE C6			inc dh
+ 0000120C  8A 55 08			mov dl, x 
+ 0000120F  80 C2 02			add dl,2
+ 00001212  E8 00000000 E		call Gotoxy
+ 00001217  E8 FFFFEF1B			call imprime_barra
+ 0000121C  80 C2 03			add dl,3
+ 0000121F  E8 00000000 E		call Gotoxy
+ 00001224  E8 FFFFEF0E			call imprime_barra
+ 00001229  FE C2			inc dl
+ 0000122B  E8 00000000 E		call Gotoxy
+ 00001230  E8 FFFFEF0A			call imprime_barra2
+ 00001235  80 C2 03			add dl,3
+ 00001238  E8 00000000 E		call Gotoxy
+ 0000123D  E8 FFFFEEFD			call imprime_barra2
+				;linha 4
+ 00001242  FE C6			inc dh
+ 00001244  8A 55 08			mov dl,x
+ 00001247  80 C2 03			add dl,3
+ 0000124A  E8 00000000 E		call Gotoxy
+ 0000124F  E8 FFFFEEE3			call imprime_barra
+ 00001254  80 C2 05			add dl,5
+ 00001257  E8 00000000 E		call Gotoxy
+ 0000125C  E8 FFFFEEDE			call imprime_barra2
+				;linha 5
+ 00001261  FE C6			inc dh
+ 00001263  8A 55 08			mov dl,x
+ 00001266  80 C2 04			add dl,4
+ 00001269  E8 00000000 E		call Gotoxy
+ 0000126E  E8 FFFFEEC4			call imprime_barra
+ 00001273  80 C2 03			add dl,3
+ 00001276  E8 00000000 E		call Gotoxy
+ 0000127B  E8 FFFFEEBF			call imprime_barra2
+				;linha 6
+ 00001280  FE C6			inc dh
+ 00001282  8A 55 08			mov dl,x
+ 00001285  80 C2 06			add dl,6
+ 00001288  E8 00000000 E		call Gotoxy
+ 0000128D  E8 FFFFEEE5			call imprime_traco	
+				ret
+ 00001296			desenha_menu_V ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001296			desenha_menu_R PROC x:BYTE,y:BYTE
+				;Desenha a letra R nas coordenadas especificas passadas por parametro
+				;Recebe: as coordenadas x e y de onde se quer desenhar
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001299  8A 55 08			mov dl,x 
+ 0000129C  8A 75 0C			mov dh,y 
+ 0000129F  FE C2			inc dl
+ 000012A1  E8 00000000 E		call Gotoxy
+ 000012A6  B9 00000005			mov ecx,5
+ 000012AB			L1:
+ 000012AB  E8 FFFFEE7F			call imprime_underline
+ 000012B0  FE C2			inc dl
+ 000012B2  E8 00000000 E		call Gotoxy
+ 000012B7  E2 F2			loop L1
+				; LINHA 2
+ 000012B9  FE C6			inc dh
+ 000012BB  8A 55 08			mov dl,x 
+ 000012BE  E8 00000000 E		call Gotoxy
+ 000012C3  E8 FFFFEE8F			call imprime_pipe
+ 000012C8  80 C2 03			add dl,3
+ 000012CB  E8 00000000 E		call Gotoxy
+ 000012D0  E8 FFFFEE5A			call imprime_underline
+ 000012D5  80 C2 03			add dl,3
+ 000012D8  E8 00000000 E		call Gotoxy
+ 000012DD  E8 FFFFEE55			call imprime_barra
+				;LINHA 3
+ 000012E2  FE C6			 inc dh
+ 000012E4  8A 55 08			 mov dl,x
+ 000012E7  E8 00000000 E		 call Gotoxy
+ 000012EC  E8 FFFFEE66			 call imprime_pipe
+ 000012F1  80 C2 02			 add dl,2
+ 000012F4  E8 00000000 E		 call Gotoxy
+ 000012F9  E8 FFFFEE59			 call imprime_pipe
+ 000012FE  FE C2			 inc dl
+ 00001300  E8 00000000 E		 call Gotoxy
+ 00001305  E8 FFFFEE25			 call imprime_underline
+ 0000130A  FE C2			 inc dl
+ 0000130C  E8 00000000 E		 call Gotoxy
+ 00001311  E8 FFFFEE51			 call imprime_parentesis_dir
+ 00001316  80 C2 03			 add dl,3
+ 00001319  E8 00000000 E		 call Gotoxy
+ 0000131E  E8 FFFFEE34			 call imprime_pipe
+				;linha 4
+ 00001323  FE C6			inc dh
+ 00001325  8A 55 08			mov dl,x
+ 00001328  E8 00000000 E		call Gotoxy
+ 0000132D  E8 FFFFEE25			call imprime_pipe
+ 00001332  80 C2 06			add dl,6
+ 00001335  E8 00000000 E		call Gotoxy
+ 0000133A  E8 FFFFEE00			call imprime_barra2
+				;linha 5
+ 0000133F  FE C6			inc dh
+ 00001341  8A 55 08			mov dl, x 
+ 00001344  E8 00000000 E		call Gotoxy
+ 00001349  E8 FFFFEE09			call imprime_pipe
+ 0000134E  80 C2 02			add dl,2
+ 00001351  E8 00000000 E		call Gotoxy
+ 00001356  E8 FFFFEDFC			call imprime_pipe
+ 0000135B  FE C2			inc dl
+ 0000135D  E8 00000000 E		call Gotoxy
+ 00001362  E8 FFFFEDD0			call imprime_barra
+ 00001367  80 C2 02			add dl,2
+ 0000136A  E8 00000000 E		call Gotoxy
+ 0000136F  E8 FFFFEDC3			call imprime_barra
+				;linha 6
+ 00001374  FE C6			inc dh 
+ 00001376  8A 55 08			mov dl,x
+ 00001379  E8 00000000 E		call Gotoxy
+ 0000137E  E8 FFFFEDD4			call imprime_pipe
+ 00001383  FE C2			inc dl
+ 00001385  E8 00000000 E		call Gotoxy
+ 0000138A  E8 FFFFEDA0			call imprime_underline
+ 0000138F  FE C2			inc dl
+ 00001391  E8 00000000 E		call Gotoxy
+ 00001396  E8 FFFFEDBC			call imprime_pipe
+ 0000139B  80 C2 02			add dl,2
+ 0000139E  E8 00000000 E		call Gotoxy
+ 000013A3  E8 FFFFED9F			call imprime_apostrofe
+ 000013A8  FE C2			inc dl
+ 000013AA  E8 00000000 E		call Gotoxy
+ 000013AF  E8 FFFFED7B			call imprime_underline
+ 000013B4  FE C2			inc dl
+ 000013B6  E8 00000000 E		call Gotoxy
+ 000013BB  E8 FFFFED97			call imprime_pipe
+				ret
+ 000013C4			desenha_menu_R ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000013C4			volta_cor_padrao PROC
+				;Volta a cor padrão do prompt
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;volta a cor do cursor para a cor padrão (modificada no procedimento desenha_personagem)
+ 000013C4  B8 00000007			mov eax, lightGray
+ 000013C9  E8 00000000 E		call SetTextColor
+ 000013CE  C3			ret
+ 000013CF			volta_cor_padrao ENDP
+
+
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000013CF			inicializaObstaculos PROC
+				;Inicializa os obstaculos com as coordenadas de x e y e o caracter
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada 
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000013CF  C6 05 000001DD R		mov obstaculos[sizeObstaculo*0].x,85
+	   55
+ 000013D6  C6 05 000001DE R		mov obstaculos[sizeObstaculo*0].y,5
+	   05
+ 000013DD  C6 05 000001DF R		mov obstaculos[sizeObstaculo*0].caracter,219
+	   DB
+ 000013E4  C6 05 000001E0 R		mov obstaculos[sizeObstaculo*1].x,95
+	   5F
+ 000013EB  C6 05 000001E1 R		mov obstaculos[sizeObstaculo*1].y,15
+	   0F
+ 000013F2  C6 05 000001E2 R		mov obstaculos[sizeObstaculo*1].caracter,219
+	   DB
+ 000013F9  C6 05 000001E3 R		mov obstaculos[sizeObstaculo*2].x,105
+	   69
+ 00001400  C6 05 000001E4 R		mov obstaculos[sizeObstaculo*2].y,20
+	   14
+ 00001407  C6 05 000001E5 R		mov obstaculos[sizeObstaculo*2].caracter,219
+	   DB
+ 0000140E  C6 05 000001E6 R		mov obstaculos[sizeObstaculo*3].x,115
+	   73
+ 00001415  C6 05 000001E7 R		mov obstaculos[sizeObstaculo*3].y,6
+	   06
+ 0000141C  C6 05 000001E8 R		mov obstaculos[sizeObstaculo*3].caracter,219
+	   DB
+ 00001423  C6 05 000001E9 R		mov obstaculos[sizeObstaculo*4].x,125
+	   7D
+ 0000142A  C6 05 000001EA R		mov obstaculos[sizeObstaculo*4].y,24
+	   18
+ 00001431  C6 05 000001EB R		mov obstaculos[sizeObstaculo*4].caracter,219
+	   DB
+ 00001438  C6 05 000001EC R		mov obstaculos[sizeObstaculo*5].x,135
+	   87
+ 0000143F  C6 05 000001ED R		mov obstaculos[sizeObstaculo*5].y,3
+	   03
+ 00001446  C6 05 000001EE R		mov obstaculos[sizeObstaculo*5].caracter,219
+	   DB
+ 0000144D  C6 05 000001EF R		mov obstaculos[sizeObstaculo*6].x,145
+	   91
+ 00001454  C6 05 000001F0 R		mov obstaculos[sizeObstaculo*6].y,14
+	   0E
+ 0000145B  C6 05 000001F1 R		mov obstaculos[sizeObstaculo*6].caracter,219
+	   DB
+ 00001462  C6 05 000001F2 R		mov obstaculos[sizeObstaculo*7].x,155
+	   9B
+ 00001469  C6 05 000001F3 R		mov obstaculos[sizeObstaculo*7].y,22
+	   16
+ 00001470  C6 05 000001F4 R		mov obstaculos[sizeObstaculo*7].caracter,219
+	   DB
+ 00001477  C6 05 000001F5 R		mov obstaculos[sizeObstaculo*8].x,165
+	   A5
+ 0000147E  C6 05 000001F6 R		mov obstaculos[sizeObstaculo*8].y,9
+	   09
+ 00001485  C6 05 000001F7 R		mov obstaculos[sizeObstaculo*8].caracter,219
+	   DB
+ 0000148C  C6 05 000001F8 R		mov obstaculos[sizeObstaculo*9].x,175
+	   AF
+ 00001493  C6 05 000001F9 R		mov obstaculos[sizeObstaculo*9].y,15
+	   0F
+ 0000149A  C6 05 000001FA R		mov obstaculos[sizeObstaculo*9].caracter,219
+	   DB
+ 000014A1  C3			ret
+ 000014A2			inicializaObstaculos ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;Procedimento que controla o jogo
+ 000014A2			jogo PROC
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000014A2  E8 00000000 E		call Clrscr
+ 000014A7  E8 FFFFEB73			call desenha_tela
+ 000014AC  C7 05 00000030 R		mov nivel,0
+	   00000000
+ 000014B6  C7 05 00000028 R		mov pontos,0
+	   00000000
+ 000014C0  E8 000005BC			call desenha_pontuacao
+ 000014C5  E8 000005D0			call desenha_nivel
+					invoke acrescenta_pontuacao,pontos
+					invoke acrescenta_nivel,nivel
+					;invoca o procedimento desenha_personagem, passando como parâmetro a coordenada 2,2 ou seja, o personagem será desenhado nessa coordenada
+					INVOKE desenha_personagem, 2,10
+ 000014E9  E8 FFFFFED6			call volta_cor_padrao
+					
+ 000014EE  E8 FFFFFEDC			call inicializaObstaculos
+					;loop de leitura do input do usuário
+ 000014F3				L0:
+						
+						INVOKE anda_obstaculo,0
+						INVOKE anda_obstaculo,1
+						INVOKE anda_obstaculo,2
+						INVOKE anda_obstaculo,3
+						INVOKE anda_obstaculo,4
+						INVOKE anda_obstaculo,5
+						INVOKE anda_obstaculo,6
+						INVOKE anda_obstaculo,7
+						INVOKE anda_obstaculo,8
+						INVOKE anda_obstaculo,9
+						
+						INVOKE verifica_colisao,jogadorx,jogadory
+ 0000154A  83 F8 01				cmp eax,1
+ 0000154D  0F 84 000001CB			je GAMEOVER
+						
+						
+						;atribui um delay de 50 para conseguir ler a entrada do usuario
+ 00001553  B8 00000032				mov eax,50
+						;chama o delay
+ 00001558  E8 00000000 E			call Delay
+						;tenta ler uma entrada de usuário
+ 0000155D  E8 00000000 E			call ReadKey
+						;se não houve entrada do usuário (0) salta para L0 e tenta ler novamente
+ 00001562  74 8F				jz L0
+						;se houve entrada do usuário, compara o conteúdo lido com ao código correspondente ascii
+						;se foi 97, então a tela foi 'a' (LEFT), salta para label LEFT
+ 00001564  3C 61				cmp al, 97
+ 00001566  74 36				je LEFT
+						;se foi 119, então a tela foi 'w' (UP), salta para label UP
+ 00001568  3C 77				cmp al, 119
+ 0000156A  0F 84 00000091			je UP
+						;se foi 100, então a tela foi 'd (RIGHT), salta para label RIGHT
+ 00001570  3C 64				cmp al, 100
+ 00001572  0F 84 000000EC			je RIGHT
+						;se foi 115, então a tela foi 's' (DOWN), salta para label DOWN
+ 00001578  3C 73				cmp al, 115
+ 0000157A  0F 84 00000143			je DOWN
+ 00001580  3C 1B				cmp al,27
+ 00001582  74 05				je _ESC
+						;se não foi nenhuma das opções, salta para label L0 e tenta ler outra tecla permitida
+ 00001584  E9 FFFFFF6A				jmp L0
+						
+ 00001589				_ESC:
+ 00001589  E8 00000000 E			call Clrscr
+ 0000158E  E8 FFFFFE31				call volta_cor_padrao
+ 00001593  E8 FFFFEA87				call desenha_tela
+ 00001598  E8 FFFFEEC9				call desenha_menu
+ 0000159D  C3					ret
+					;entrada do usuário foi 'a'
+ 0000159E				LEFT:
+						;compara se a posição x do jogador é 1, se for o movimento não é permitido para a esquerda e nada acontece (Controle de borda)
+ 0000159E  80 3D 000001DB R			cmp jogadorx,1
+	   01
+						;salta para L0 para tentar ler uma entrada válida
+ 000015A5  0F 84 FFFFFF48			je L0
+						;se a posição x do jogador não for 1, então o movimento é permitido 
+						;chama o procedimento apaga personagem
+ 000015AB  E8 0000017E				call apaga_personagem
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 000015C1  83 F8 01				cmp eax,1
+ 000015C4  0F 84 00000154			je GAMEOVER
+						;subtrai 1 da posicao x do jogador
+ 000015CA  80 2D 000001DB R			sub jogadorx,1
+	   01
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 000015E2  83 F8 01				cmp eax,1
+ 000015E5  0F 84 00000133			je GAMEOVER
+						;desenha o personagem na nova posicao
+						INVOKE desenha_personagem, jogadorx, jogadory
+						
+						;salta ara L0 para tentar ler uma nova entrada
+ 000015FC  E9 FFFFFEF2				jmp L0
+						
+	;entrada do usuário foi 'w'
+ 00001601				UP: 
+						;compara se a posicao y do jogador é 1, se for, o movimento não é permitido para cima e nada acontece (Controle de borda)
+ 00001601  80 3D 000001DC R			cmp jogadory,2
+	   02
+						;salta para L0 para tentar ler uma entrada válida
+ 00001608  0F 84 FFFFFEE5			je L0
+						;se a posicao y do jogador não for 1, o movimento é permitido
+						;chama o procedimento apaga personagem
+ 0000160E  E8 0000011B				call apaga_personagem
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 00001624  83 F8 01				cmp eax,1
+ 00001627  0F 84 000000F1			je GAMEOVER
+						;subtrai 1 da posicao y do jogador
+ 0000162D  80 2D 000001DC R			sub jogadory,1
+	   01
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 00001645  83 F8 01				cmp eax,1
+ 00001648  0F 84 000000D0			je GAMEOVER
+						;desenha o personagem na nova posicao
+						INVOKE desenha_personagem, jogadorx, jogadory
+
+						;salta para L0 para ler tentar ler uma nova entrada
+ 0000165F  E9 FFFFFE8F				jmp L0
+					
+ 00001664				RIGHT:
+						;compara se a posicao x do jogador é 78, se for, o movimento não é permitido para a direita e nada acontece (Controle de borda)
+ 00001664  80 3D 000001DB R			cmp jogadorx,78
+	   4E
+						;salta para L0 para tentar ler uma entrada válida
+ 0000166B  0F 84 FFFFFE82			je L0
+						;se a posicao x do jogador não for 78, o movimento é permitido
+						;chama o procedimento apaga personagem
+ 00001671  E8 000000B8				call apaga_personagem
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 00001687  83 F8 01				cmp eax,1
+ 0000168A  0F 84 0000008E			je GAMEOVER
+						;adiciona 1 a posicao x do jogador
+ 00001690  80 05 000001DB R			add jogadorx,1
+	   01
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 000016A8  83 F8 01				cmp eax,1
+ 000016AB  74 71				je GAMEOVER
+						;desenha o personagem na nova posicao
+						INVOKE desenha_personagem, jogadorx, jogadory
+						
+						;salta para L0 para ler tentar ler uma nova entrada
+ 000016BE  E9 FFFFFE30				jmp L0
+						
+ 000016C3				DOWN: 
+						;compara se a posicao y do jogador é 24, se for, o movimento não é permitido para a direita e nada acontece (Controle de borda)
+ 000016C3  80 3D 000001DC R			cmp jogadory,24
+	   18
+						;salta para L0 para tentar ler uma entrada válida
+ 000016CA  0F 84 FFFFFE23			je L0
+						;se a posicao y do jogador não for 24, o movimento é permitido
+						;chama o procedimento apaga personagem
+ 000016D0  E8 00000059				call apaga_personagem
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 000016E6  83 F8 01				cmp eax,1
+ 000016E9  74 33				je GAMEOVER
+						;adiciona 1 a posicao y do jogador
+ 000016EB  80 05 000001DC R			add jogadory,1
+	   01
+						INVOKE verifica_colisao, jogadorx,jogadory
+ 00001703  83 F8 01				cmp eax,1
+ 00001706  74 16				je GAMEOVER
+						;desenha o personagem na nova posicao
+						INVOKE desenha_personagem, jogadorx, jogadory
+						
+						;salta para L0 para ler tentar ler uma nova entrada
+ 00001719  E9 FFFFFDD5				jmp L0
+						
+ 0000171E				GAMEOVER:
+ 0000171E  E8 00000000 E			call Clrscr
+ 00001723  E8 FFFFFC9C				call volta_cor_padrao
+ 00001728  E8 000001C7				call game_over
+ 0000172D  C3					ret
+ 0000172E			jogo ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000172E			apaga_personagem PROC
+				;Apaga o personagem da posicao atual para desenhá-lo na nova posicao
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;move o cursor para a posicao atual do jogador. DL controla a coluna (x), e DH controla a linha (Y)
+ 0000172E  8A 15 000001DB R		mov dl,jogadorx
+ 00001734  8A 35 000001DC R		mov dh,jogadory
+ 0000173A  E8 00000000 E		call Gotoxy
+					;substitui o personagem por ' ', ou seja, apaga ele da tela
+ 0000173F  B0 20			mov al, ' '
+ 00001741  E8 00000000 E		call WriteChar
+ 00001746  C3				ret
+ 00001747			apaga_personagem ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001747			desenha_personagem PROC x:BYTE, y:BYTE
+				;Desenha o personagem do jogador
+				;Recebe: as coordenada desejadas da onde se quer desenha-lo
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;move o cursor para a posicao x,y recebida como parâmetro. DL controla a coluna (x), e DH controla a linha (Y)
+ 0000174A  8A 55 08			mov dl,x
+ 0000174D  8A 75 0C			mov dh, y
+					;atualiza a variavel jogador para a posicao nova
+ 00001750  88 15 000001DB R		mov jogadorx, dl
+ 00001756  88 35 000001DC R		mov jogadory,dh
+					;move o cursor
+ 0000175C  E8 00000000 E		call Gotoxy
+					;attribui ao registrador usado em SetTextColor, que a cor do texto vai ser amarela (cor do personagem)
+ 00001761  B8 0000000E			mov EAX, yellow+(black*16)
+ 00001766  E8 00000000 E		call SetTextColor
+					;move para al (caracter a ser impresso), o caracter do jogador
+ 0000176B  A0 00000002 R		mov al, jogador
+					;printa o jogador
+ 00001770  E8 00000000 E		call WriteChar
+					ret
+ 00001779			desenha_personagem ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001779			verifica_colisao PROC xjogador:BYTE, yjogador:BYTE
+				;verifica a colisão entre os obstaculos e o jogador
+				;Recebe: as coordenadas do jogador
+				;Retorna: EAX=1 SE COLIDIU, EAX=0 SE NAO COLIDIU
+				;Requer: calculo do endereço efetivo do obstaculo
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 0000177C  B9 0000000A			mov ecx,10
+				;coloca o indice em edx
+ 00001781  BB 00000000			mov ebx,0
+ 00001786			VERIFICA_OBSTACULOS:
+ 00001786  8B D3			mov edx,ebx
+					;;coloca o tamanho da struct OBSTACULO em eax
+ 00001788  B8 00000003			mov eax, sizeof OBSTACULO
+					;multiplica eax com ecx (indice * sizeof)
+ 0000178D  F7 E2			mul edx
+					;coloca o endereço calculado em edx
+ 0000178F  8B D0			mov edx,eax
+					;Faz a verificação da colisao em X
+ 00001791			VERIFICAY:	
+ 00001791  8A 45 0C			mov al,yjogador
+ 00001794  3A 82 000001DE R		cmp al,obstaculos[edx].y
+ 0000179A  74 02			je VERIFICAX
+ 0000179C  EB 14			jmp NEXT
+				;Faz a verificação da colisão em Y
+ 0000179E			VERIFICAX:
+ 0000179E  8A 45 08			mov al,xjogador
+ 000017A1  3A 82 000001DD R		cmp al,obstaculos[edx].x
+ 000017A7  74 02			je COLIDIU
+ 000017A9  EB 07			jmp NEXT
+ 000017AB			COLIDIU:
+					;se colidiu coloca 1 em eax
+ 000017AB  B8 00000001			mov eax,1
+ 000017B0  EB 08			jmp _RET
+ 000017B2			NEXT:
+ 000017B2  43				inc ebx
+ 000017B3  E2 D1			loop VERIFICA_OBSTACULOS
+					;se nao colidiu retorna 0 em eax
+ 000017B5  B8 00000000			mov eax,0
+ 000017BA			_RET:
+				ret
+ 000017BE			verifica_colisao ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000017BE			desenha_obstaculo PROC index:DWORD
+				;Desenha o obstaculo de novo
+				;Recebe: indice do objeto
+				;Retorna: nada
+				;Requer: calculo do endereço efetivo do obstaculo
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;coloca o indice em eax 
+ 000017C1  8B 45 08			mov eax,index
+					;coloca o tamanho da struct OBSTACULO em ecx
+ 000017C4  B9 00000003			mov ecx, SIZEOF OBSTACULO
+					;multiplica eax com ecx (indice * sizeof)
+ 000017C9  F7 E1			mul ecx
+ 000017CB  8B C8			mov ecx,eax
+					;;coloca o cursor na posicao do obstaculo
+ 000017CD  8A 91 000001DD R		mov dl, obstaculos[ecx].x
+ 000017D3  8A B0 000001DE R		mov dh, obstaculos[eax].y
+ 000017D9  E8 00000000 E		call Gotoxy
+					;troca a cor para azul
+ 000017DE  B8 00000009			mov EAX, lightBlue+(black*16)
+ 000017E3  E8 00000000 E		call SetTextColor
+					;coloca em al o caracter do obstaculo 
+ 000017E8  8A 81 000001DF R		mov al, obstaculos[ecx].caracter
+ 000017EE  E8 00000000 E		call WriteChar
+					ret
+ 000017F7			desenha_obstaculo ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000017F7			apaga_obstaculo PROC index:DWORD
+				;Apaga o obstaculo para atualiza-lo na tela de jogo na nova posicao
+				;Recebe: indice do objeto
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;coloca o indice em ecx 
+ 000017FA  8B 4D 08			mov ecx,index
+					;coloca o tamanho da struct OBSTACULO em eax
+ 000017FD  B8 00000003			mov eax,SIZEOF OBSTACULO
+					;multiplica eax com ecx (indice * sizeof)
+ 00001802  F7 E1			mul ecx
+					;coloca o endereço calculado em ecx para acessá-lo
+ 00001804  8B C8			mov ecx,eax
+					;coloca o cursor na posicao do obstaculo
+ 00001806  8A 91 000001DD R		mov dl, obstaculos[ecx].x
+ 0000180C  8A B1 000001DE R		mov dh, obstaculos[ecx].y
+ 00001812  E8 00000000 E		call Gotoxy
+					;substitui o que tem na posicao (obstaculo) por nada
+ 00001817  B0 20			mov al, ' '
+ 00001819  E8 00000000 E		call WriteChar
+					ret
+ 00001822			apaga_obstaculo ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001822			anda_obstaculo PROC index:DWORD
+				;Faz os obstáculos andarem na tela
+				;Recebe: o indice do objeto que vai andar na tela
+				;Retorna: nada
+				;Requer: calculo do endereço do objeto no indice informado
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;coloca em edx, o indice
+ 00001825  8B 55 08			mov edx,index
+					;coloca em eax o tamanho da struct do tipo OBSTACULO
+ 00001828  B8 00000003			mov eax,sizeof OBSTACULO
+					;multiplca o indice pelo tamanho para achar o endereço efetivo
+ 0000182D  F7 E2			mul edx
+					;coloca em edx, o endereço efetivo, ele será nosso indice para acessar os elementos,x,y e caracter
+ 0000182F  8B D0			mov edx,eax
+					;compara o x do obstaculo com 78 (ou seja, ele será visivel na tela de jogo)
+ 00001831  80 BA 000001DD R		cmp obstaculos[edx].x,78
+	   4E
+					;se for maior que 78, ele nao será visivel na tela de jogo
+					;necessario realizar isso para que haja um espaçamento entre os obstaculos
+ 00001838  77 0A			ja L0
+					;se nao é 78, significa que ele ja está na tela de jogo
+					;apaga o obstaculo, passando o indice dele
+					INVOKE apaga_obstaculo, index
+					;pula para L1
+ 00001842  EB 0B			jmp L1
+					;entra nessa label quando a coordenada x do objeto ainda é maior que 78
+ 00001844				L0: 
+						;decrementa a coordenada e retorna
+ 00001844  FE 8A 000001DD R			dec obstaculos[edx].x
+ 0000184A  E9 000000A1				jmp RETURN
+					;entra nessa label quando a coordenada x do objeto esta abaixo de 78 (visivel)
+ 0000184F				L1: 
+						;faz o calculo do endereço efetivo do objeto (como acima)
+ 0000184F  8B 55 08				mov edx,index
+ 00001852  B8 00000003				mov eax,sizeof OBSTACULO
+ 00001857  F7 E2				mul edx
+ 00001859  8B D0				mov edx,eax
+						;CONTROLE DE NIVEL: compara o nível atual e salta para a label correspondente
+ 0000185B  83 3D 00000030 R			cmp nivel,0
+	   00
+ 00001862  74 0B				je _NIVEL0
+ 00001864  83 3D 00000030 R			cmp nivel,1
+	   01
+ 0000186B  74 0A				je _NIVEL1
+						
+						
+ 0000186D  EB 11				jmp L2
+						;No nivel 0, as coordenadas x dos obstáculos serão acrescidas de 1
+						;No nível 1 de 2 e assim por diante, dando a impressao que os obstaculos
+						;estão mais rápidos
+ 0000186F					_NIVEL0: 
+ 0000186F  FE 8A 000001DD R				dec obstaculos[edx].x
+ 00001875  EB 09					JMP L2
+ 00001877					_NIVEL1:
+ 00001877  80 AA 000001DD R				sub obstaculos[edx].x,2
+	   02
+ 0000187E  EB 00					JMP L2
+					
+ 00001880				L2:
+						;compara a coordenada do obstaculo com 0, ou seja, se é 0 o obstaculo vai sair da tela
+ 00001880  80 BA 000001DD R			cmp obstaculos[edx].x, 0
+	   00
+						;se nao é 0 e nem é menor do que 0,salta para DESENHA que vai desenhar o obstaculo
+ 00001887  7F 5F				jnle DESENHA
+						;incrementa a pontuação
+ 00001889  FF 05 00000028 R			inc pontos
+ 0000188F  8B 15 00000028 R			mov edx,pontos
+ 00001895  3B 15 0000002C R			cmp edx,melhor_pontuacao
+ 0000189B  77 02				ja MELHOR_PONTUACAO_MUDA
+ 0000189D  EB 06				JMP CONTINUE
+ 0000189F				MELHOR_PONTUACAO_MUDA:
+ 0000189F  89 15 0000002C R			mov melhor_pontuacao,edx
+						;exibe a pontuação atualizada
+ 000018A5				CONTINUE:
+						INVOKE acrescenta_pontuacao,pontos
+						;verifica se nao mudou de nivel
+						INVOKE verifica_nivel,pontos
+						;calcula o endereço efetivo como acima 
+ 000018BB  8B 55 08				mov edx,index
+ 000018BE  B8 00000003				mov eax,sizeof OBSTACULO
+ 000018C3  F7 E2				mul edx
+						;coloca em edx o endereço efetivo
+ 000018C5  8B D0				mov edx,eax
+						;como a coordenada é 0 ou menor que 0, o obstáculo 
+						;volta para fora de tela de jogo para entrar novamente com outro y
+ 000018C7  C6 82 000001DD R			mov obstaculos[edx].x,85
+	   55
+						;colcoa 22 em eax, para randomizar a escolha do novo y do obstaculo
+ 000018CE  B8 00000016				mov eax,22
+						;zera as sementes do randomico (necessario para cada execução ser diferente)
+ 000018D3  E8 00000000 E			call Randomize
+						;gera um randomico de 0 até eax, ou seja, de 0 a 22
+ 000018D8  E8 00000000 E			call RandomRange
+						;como a tela disponivel de jogo vai de 2 a 24, precisamos adicionar 2 ao randomico gerado
+						;para ser um numero de 2 a 24
+ 000018DD  83 C0 02				add eax,2
+						;atualiza o novo y
+ 000018E0  88 82 000001DE R			mov obstaculos[edx].y, al
+ 000018E6  EB 08		    jmp RETURN
+ 000018E8				DESENHA:
+						;faz o desenho do obstaculo
+						INVOKE desenha_obstaculo, index
+ 000018F0				RETURN:
+						ret
+ 000018F4			anda_obstaculo ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000018F4			game_over PROC
+				;Chama a tela de Game Over: redesenha a tela e monta o texto de game over e menu
+				;Recebe: nada
+				;Retorna:nada 
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;limpa tela
+ 000018F4  E8 00000000 E		call Clrscr
+					;redesenha a tela (bordas)
+ 000018F9  E8 FFFFE721			call desenha_tela
+					;desenha as letras de game over 
+					invoke desenha_menu_G,3,1
+					invoke desenha_menu_A,9,1
+					invoke desenha_menu_M,19,1
+					invoke desenha_menu_E,29,1
+					invoke desenha_menu_O,39,1
+					invoke desenha_menu_V,48,1
+					invoke desenha_menu_E,60,1
+					invoke desenha_menu_R,70,1
+					;desenha menu de opçoes
+ 00001946  E8 FFFFE881			call desenha_opcoes_gameOver
+					;chama o controle do menu
+ 0000194B  E8 FFFFE9FE			call controla_menu_gameOver
+ 00001950  C3			ret
+ 00001951			game_over ENDP
+					
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001951			instrucoes PROC
+				;Desenha a tela de instruções
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				    ;posiciona o cursor em x=35 e y=5
+ 00001951  B2 23			mov dl,35
+ 00001953  B6 05			mov dh,5
+ 00001955  E8 00000000 E		call Gotoxy
+					;printa a primeira frase de instruções
+ 0000195A  BA 00000041 R		mov edx, OFFSET opcao2_mp
+ 0000195F  E8 00000000 E		call WriteString
+ 00001964  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=15 e y=11
+ 00001969  B2 0F			mov dl,15
+ 0000196B  B6 0B			mov dh,11
+ 0000196D  E8 00000000 E		call Gotoxy
+					;printa a segunda frase de instruções
+ 00001972  BA 00000077 R		mov edx, OFFSET instrucoes_jogo_1
+ 00001977  E8 00000000 E		call WriteString
+ 0000197C  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=15 e y=13
+ 00001981  B2 0F			mov dl,15
+ 00001983  B6 0D			mov dh,13
+ 00001985  E8 00000000 E		call Gotoxy
+					;printa a terceira frase de insruções
+ 0000198A  BA 000000A5 R		mov edx, OFFSET instrucoes_jogo_2
+ 0000198F  E8 00000000 E		call WriteString
+ 00001994  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=16 e y=21
+ 00001999  B2 10			mov dl,16
+ 0000199B  B6 15			mov dh,21
+ 0000199D  E8 00000000 E		call Gotoxy
+					;printa a quarta frase de instruçoes
+ 000019A2  BA 000000DA R		mov edx, OFFSET instrucoes_jogo_3
+ 000019A7  E8 00000000 E		call WriteString
+					;CONTROLE DO TECLADO PARA QUANDO O USUARIO APERTAR ESC, VOLTAR AO MENU PRINCIPAL
+ 000019AC				L0:
+						;atribui um delay de 50 para conseguir ler a entrada do usuario
+ 000019AC  B8 00000032				mov eax,50
+						;chama o delay
+ 000019B1  E8 00000000 E			call Delay
+						;tenta ler uma entrada de usuário
+ 000019B6  E8 00000000 E			call ReadKey
+						;se não houve entrada do usuário (0) salta para L0 e tenta ler novamente
+ 000019BB  74 EF			jz L0
+					;se houve entrada, ve se foi a tecla ESC
+ 000019BD  3C 1B			cmp al,27
+					;se nao foi esc, volta para tentar uma nova tecla
+ 000019BF  75 EB			jne L0
+					;se foi esc, limpa a tela e chama o menu
+ 000019C1  E8 00000000 E		call Clrscr
+ 000019C6  E8 FFFFE654			call desenha_tela
+ 000019CB  E8 FFFFEA96			call desenha_menu
+ 000019D0  C3			ret
+ 000019D1			instrucoes ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 000019D1			sobre PROC
+				;Desenha a tela do menu principal e opção sobre
+				;Recebe: nada
+				;Retorna: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;posiciona cursor em x=35, y=3
+ 000019D1  B2 23			mov dl,35
+ 000019D3  B6 03			mov dh,3
+ 000019D5  E8 00000000 E		call Gotoxy
+					;escreve a primeira frase de sobre (titulo)
+ 000019DA  BA 0000004C R		mov edx, OFFSET opcao4_mp
+ 000019DF  E8 00000000 E		call WriteString
+ 000019E4  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=8, y=8
+ 000019E9  B2 08			mov dl,8
+ 000019EB  B6 08			mov dh,8
+ 000019ED  E8 00000000 E		call Gotoxy
+					;escreve a segunda frase de sobre 
+ 000019F2  BA 00000108 R		mov edx, OFFSET sobre_1
+ 000019F7  E8 00000000 E		call WriteString
+ 000019FC  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=16, y=9
+ 00001A01  B2 10			mov dl,16
+ 00001A03  B6 09			mov dh,9
+ 00001A05  E8 00000000 E		call Gotoxy
+					;escreve a terceira frase de sobre 
+ 00001A0A  BA 0000014D R		mov edx, OFFSET sobre_2
+ 00001A0F  E8 00000000 E		call WriteString
+ 00001A14  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=25, y=10
+ 00001A19  B2 19			mov dl,25
+ 00001A1B  B6 0A			mov dh,10
+ 00001A1D  E8 00000000 E		call Gotoxy
+					;escreve a quarta frase de sobre 
+ 00001A22  BA 0000017E R		mov edx, OFFSET sobre_3
+ 00001A27  E8 00000000 E		call WriteString
+ 00001A2C  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=12, y=11
+ 00001A31  B2 0C			mov dl,12
+ 00001A33  B6 0B			mov dh,11
+ 00001A35  E8 00000000 E		call Gotoxy
+					;escreve a quinta frase de sobre 
+ 00001A3A  BA 0000019D R		mov edx, OFFSET sobre_4
+ 00001A3F  E8 00000000 E		call WriteString
+ 00001A44  E8 00000000 E		call Crlf
+					;posiciona o cursor em x=16, y=21
+ 00001A49  B2 10			mov dl,16
+ 00001A4B  B6 15			mov dh,21
+ 00001A4D  E8 00000000 E		call Gotoxy
+					;escreve a sexta frase de sobre 
+ 00001A52  BA 000000DA R		mov edx, OFFSET instrucoes_jogo_3
+ 00001A57  E8 00000000 E		call WriteString
+					;CONTROLE DA TELA SOBRE: QUANDO O USUARIO PRESSIONA A TECLA ESC, VOLTA AO MENU PRINCIPAL
+ 00001A5C				L0:
+						;atribui um delay de 50 para conseguir ler a entrada do usuario
+ 00001A5C  B8 00000032				mov eax,50
+						;chama o delay
+ 00001A61  E8 00000000 E			call Delay
+						;tenta ler uma entrada de usuário
+ 00001A66  E8 00000000 E			call ReadKey
+						;se não houve entrada do usuário (0) salta para L0 e tenta ler novamente
+ 00001A6B  74 EF			jz L0
+					;verifica se o usuario pressionou a tecla ESC
+ 00001A6D  3C 1B			cmp al,27
+					;se nao pressionou, tenta ler uma nova tecla
+ 00001A6F  75 EB			jne L0
+					;se pressionou chama o menu principal
+ 00001A71  E8 00000000 E		call Clrscr
+ 00001A76  E8 FFFFE5A4			call desenha_tela
+ 00001A7B  E8 FFFFE9E6			call desenha_menu
+ 00001A80  C3			ret
+ 00001A81			sobre ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001A81			desenha_pontuacao PROC
+				;desenha a pontuação na tela de jogo
+				;Recebe: nada
+				;Retorna: nada
+				;Rqeuer: nada 
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001A81  E8 FFFFF93E			call volta_cor_padrao
+ 00001A86  B2 01			mov dl,1
+ 00001A88  B6 01			mov dh,1
+ 00001A8A  E8 00000000 E		call Gotoxy
+ 00001A8F  BA 00000006 R		mov edx, OFFSET points
+ 00001A94  E8 00000000 E		call WriteString
+ 00001A99  C3			ret
+ 00001A9A			desenha_pontuacao ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001A9A			desenha_nivel PROC
+				;desenha o nivel na tela de jogo
+				;Recebe: nada
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001A9A  E8 FFFFF925			call volta_cor_padrao
+ 00001A9F  B2 0F			mov dl,15
+ 00001AA1  B6 01			mov dh,1
+ 00001AA3  E8 00000000 E		call Gotoxy
+ 00001AA8  BA 0000000F R		mov edx, OFFSET level
+ 00001AAD  E8 00000000 E		call WriteString
+ 00001AB2  C3			ret
+ 00001AB3			desenha_nivel ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001AB3			acrescenta_nivel PROC nivelJogo:DWORD
+				;printa o acrescimo de nível de jogo na tela de jogo
+				;Recebe: o nível atual
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001AB6  B2 16			mov dl, 22
+ 00001AB8  B6 01			mov dh,	1
+ 00001ABA  E8 00000000 E		call Gotoxy
+ 00001ABF  8B 45 08			mov eax, nivelJogo
+ 00001AC2  E8 00000000 E		call WriteInt
+				ret
+ 00001ACB			acrescenta_nivel ENDP
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001ACB			acrescenta_pontuacao PROC pontuacao:DWORD
+				;printa o acrescimo da pontuação na tela de jogo
+				;Recebe: a pontuação atual
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001ACE  E8 FFFFF8F1			call volta_cor_padrao
+ 00001AD3  B2 09			mov dl, 9
+ 00001AD5  B6 01			mov dh,	1
+ 00001AD7  E8 00000000 E		call Gotoxy
+ 00001ADC  8B 45 08			mov eax, pontuacao
+ 00001ADF  E8 00000000 E		call WriteInt
+ 00001AE4  B2 1E			mov dl,30
+ 00001AE6  B6 01			mov dh,1
+ 00001AE8  E8 00000000 E		call Gotoxy
+ 00001AED  BA 00000017 R		mov edx, OFFSET melhor_ponto
+ 00001AF2  E8 00000000 E		call WriteString
+ 00001AF7  E8 00000004			call acrescenta_melhor_pontuacao
+				ret
+ 00001B00			acrescenta_pontuacao ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001B00			acrescenta_melhor_pontuacao PROC 
+				;printa a melhor pontuação na tela de jogo
+				;Recebe: a melhor pontuacao atual
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001B00  E8 FFFFF8BF			call volta_cor_padrao
+ 00001B05  B2 30			mov dl, 48
+ 00001B07  B6 01			mov dh,	1
+ 00001B09  E8 00000000 E		call Gotoxy
+ 00001B0E  A1 0000002C R		mov eax, melhor_pontuacao
+ 00001B13  E8 00000000 E		call WriteInt	
+ 00001B18  C3			ret
+ 00001B19			acrescenta_melhor_pontuacao ENDP
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00001B19			verifica_nivel PROC pontosJogo:DWORD
+				;Faz a verificação de nivel do jogo. Verifica se a quantidade de pontos é multipla de
+				;100 e se for, acrescenta 1 no nível
+				;Recebe: pontos atual no jogo
+				;Retorna: nada
+				;Requer: nada
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;guarda edx, pois na função que ele é chamado, logo após a chamada do procedimento
+					;ele é utilizado de novo
+ 00001B1C  52				push edx
+					;zera edx (resto da divisao)
+ 00001B1D  BA 00000000			mov edx,0
+					;coloca em eax, a pontuação do jogo 
+ 00001B22  8B 45 08			mov eax,pontosJogo 
+					;coloca em ebx, 100 (o divisor)
+ 00001B25  BB 00000064			mov ebx,100
+					;realiza a divisao
+ 00001B2A  F7 F3			div ebx
+					;compara se o resto (que esta em edx, apos a divisao) é zero
+ 00001B2C  83 FA 00			cmp edx,0
+					;se for 0
+ 00001B2F  74 02			je ATUALIZA
+					;se nao for, retorna
+ 00001B31  EB 1C			jmp NEXT
+ 00001B33			ATUALIZA:
+ 00001B33  83 3D 00000030 R		cmp nivel,1
+	   01
+ 00001B3A  7C 02			jl _ATUALIZA
+ 00001B3C  EB 11			JMP NEXT
+ 00001B3E			_ATUALIZA:	
+ 00001B3E  FF 05 00000030 R		inc nivel
+					INVOKE acrescenta_nivel,nivel
+ 00001B4F			NEXT:
+ 00001B4F  5A			pop edx
+				ret
+ 00001B54			verifica_nivel ENDP
+
+				END main
+
+Microsoft (R) Macro Assembler Version 12.00.21005.1	    07/09/17 19:32:12
+jogoFlipFlop.asm					     Symbols 2 - 1
+
+
+
+
+Structures and Unions:
+
+                N a m e                  Size
+                                         Offset      Type
+
+CONSOLE_CURSOR_INFO  . . . . . .	 00000008
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  bVisible . . . . . . . . . . .	 00000004	 DWord
+CONSOLE_SCREEN_BUFFER_INFO . . .	 00000016
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCursorPosition . . . . . . .	 00000004	 DWord
+  wAttributes  . . . . . . . . .	 00000008	 Word
+  srWindow . . . . . . . . . . .	 0000000A	 QWord
+  dwMaximumWindowSize  . . . . .	 00000012	 DWord
+COORD  . . . . . . . . . . . . .	 00000004
+  X  . . . . . . . . . . . . . .	 00000000	 Word
+  Y  . . . . . . . . . . . . . .	 00000002	 Word
+FILETIME . . . . . . . . . . . .	 00000008
+  loDateTime . . . . . . . . . .	 00000000	 DWord
+  hiDateTime . . . . . . . . . .	 00000004	 DWord
+FOCUS_EVENT_RECORD . . . . . . .	 00000004
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+FPU_ENVIRON  . . . . . . . . . .	 0000001C
+  controlWord  . . . . . . . . .	 00000000	 Word
+  statusWord . . . . . . . . . .	 00000004	 Word
+  tagWord  . . . . . . . . . . .	 00000008	 Word
+  instrPointerOffset . . . . . .	 0000000C	 DWord
+  instrPointerSelector . . . . .	 00000010	 DWord
+  operandPointerOffset . . . . .	 00000014	 DWord
+  operandPointerSelector . . . .	 00000018	 Word
+INPUT_RECORD . . . . . . . . . .	 00000014
+  EventType  . . . . . . . . . .	 00000000	 Word
+  Event  . . . . . . . . . . . .	 00000004	 XmmWord
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+KEY_EVENT_RECORD . . . . . . . .	 00000010
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+MENU_EVENT_RECORD  . . . . . . .	 00000004
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+MOUSE_EVENT_RECORD . . . . . . .	 00000010
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+OBSTACULO  . . . . . . . . . . .	 00000003
+  x  . . . . . . . . . . . . . .	 00000000	 Byte
+  y  . . . . . . . . . . . . . .	 00000001	 Byte
+  caracter . . . . . . . . . . .	 00000002	 Byte
+SMALL_RECT . . . . . . . . . . .	 00000008
+  Left . . . . . . . . . . . . .	 00000000	 Word
+  Top  . . . . . . . . . . . . .	 00000002	 Word
+  Right  . . . . . . . . . . . .	 00000004	 Word
+  Bottom . . . . . . . . . . . .	 00000006	 Word
+SYSTEMTIME . . . . . . . . . . .	 00000010
+  wYear  . . . . . . . . . . . .	 00000000	 Word
+  wMonth . . . . . . . . . . . .	 00000002	 Word
+  wDayOfWeek . . . . . . . . . .	 00000004	 Word
+  wDay . . . . . . . . . . . . .	 00000006	 Word
+  wHour  . . . . . . . . . . . .	 00000008	 Word
+  wMinute  . . . . . . . . . . .	 0000000A	 Word
+  wSecond  . . . . . . . . . . .	 0000000C	 Word
+  wMilliseconds  . . . . . . . .	 0000000E	 Word
+WINDOW_BUFFER_SIZE_RECORD  . . .	 00000004
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 000001FC Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00001B54 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMaxXY . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMseconds  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetNumberOfConsoleInputEvents  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetProcessHeap . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadHex  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleScreenBufferSize . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTextAttribute  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTitleA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleWindowInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetFilePointer . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteChar  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleA  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputAttribute  . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputCharacterA . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteDec . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+acrescenta_melhor_pontuacao  . .	P Near	 00001B00 _TEXT	Length= 00000019 Public STDCALL
+acrescenta_nivel . . . . . . . .	P Near	 00001AB3 _TEXT	Length= 00000018 Public STDCALL
+  nivelJogo  . . . . . . . . . .	DWord	 bp + 00000008
+acrescenta_pontuacao . . . . . .	P Near	 00001ACB _TEXT	Length= 00000035 Public STDCALL
+  pontuacao  . . . . . . . . . .	DWord	 bp + 00000008
+anda_obstaculo . . . . . . . . .	P Near	 00001822 _TEXT	Length= 000000D2 Public STDCALL
+  index  . . . . . . . . . . . .	DWord	 bp + 00000008
+  L0 . . . . . . . . . . . . . .	L Near	 00001844 _TEXT	
+  L1 . . . . . . . . . . . . . .	L Near	 0000184F _TEXT	
+  _NIVEL0  . . . . . . . . . . .	L Near	 0000186F _TEXT	
+  _NIVEL1  . . . . . . . . . . .	L Near	 00001877 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00001880 _TEXT	
+  MELHOR_PONTUACAO_MUDA  . . . .	L Near	 0000189F _TEXT	
+  CONTINUE . . . . . . . . . . .	L Near	 000018A5 _TEXT	
+  DESENHA  . . . . . . . . . . .	L Near	 000018E8 _TEXT	
+  RETURN . . . . . . . . . . . .	L Near	 000018F0 _TEXT	
+apaga_obstaculo  . . . . . . . .	P Near	 000017F7 _TEXT	Length= 0000002B Public STDCALL
+  index  . . . . . . . . . . . .	DWord	 bp + 00000008
+apaga_personagem . . . . . . . .	P Near	 0000172E _TEXT	Length= 00000019 Public STDCALL
+apaga_seta_menu  . . . . . . . .	P Near	 00000211 _TEXT	Length= 0000000B Public STDCALL
+controla_menu_gameOver . . . . .	P Near	 0000034E _TEXT	Length= 00000118 Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 00000364 _TEXT	
+  UP . . . . . . . . . . . . . .	L Near	 00000387 _TEXT	
+  UP1  . . . . . . . . . . . . .	L Near	 000003AF _TEXT	
+  UP2  . . . . . . . . . . . . .	L Near	 000003B6 _TEXT	
+  DOWN . . . . . . . . . . . . .	L Near	 000003CE _TEXT	
+  DOWN1  . . . . . . . . . . . .	L Near	 000003F6 _TEXT	
+  DOWN2  . . . . . . . . . . . .	L Near	 000003FD _TEXT	
+  _ENTER . . . . . . . . . . . .	L Near	 00000418 _TEXT	
+  _JOGO  . . . . . . . . . . . .	L Near	 00000438 _TEXT	
+  _MENU  . . . . . . . . . . . .	L Near	 0000043F _TEXT	
+  _SAIR  . . . . . . . . . . . .	L Near	 00000450 _TEXT	
+  NEXT . . . . . . . . . . . . .	L Near	 00000465 _TEXT	
+controla_menu  . . . . . . . . .	P Near	 0000021C _TEXT	Length= 00000132 Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 00000232 _TEXT	
+  UP . . . . . . . . . . . . . .	L Near	 00000255 _TEXT	
+  UP1  . . . . . . . . . . . . .	L Near	 0000027D _TEXT	
+  UP2  . . . . . . . . . . . . .	L Near	 00000284 _TEXT	
+  DOWN . . . . . . . . . . . . .	L Near	 0000029C _TEXT	
+  DOWN1  . . . . . . . . . . . .	L Near	 000002C4 _TEXT	
+  DOWN2  . . . . . . . . . . . .	L Near	 000002CB _TEXT	
+  _ENTER . . . . . . . . . . . .	L Near	 000002E6 _TEXT	
+  _JOGO  . . . . . . . . . . . .	L Near	 0000030F _TEXT	
+  _INSTRUCOES  . . . . . . . . .	L Near	 00000316 _TEXT	
+  _SOBRE . . . . . . . . . . . .	L Near	 00000327 _TEXT	
+  _SAIR  . . . . . . . . . . . .	L Near	 00000338 _TEXT	
+  NEXT . . . . . . . . . . . . .	L Near	 0000034D _TEXT	
+desenha_jogador  . . . . . . . .	P Near	 000008B4 _TEXT	Length= 00000053 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000008D8 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 000008EC _TEXT	
+desenha_menu_A . . . . . . . . .	P Near	 00000CBF _TEXT	Length= 0000013B Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000CD0 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00000D8C _TEXT	
+desenha_menu_E . . . . . . . . .	P Near	 00000F76 _TEXT	Length= 0000011B Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000F8B _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00000FB5 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00001051 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 00001073 _TEXT	
+desenha_menu_F . . . . . . . . .	P Near	 000004B9 _TEXT	Length= 00000109 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L0 . . . . . . . . . . . . . .	L Near	 000004CC _TEXT	
+  L1 . . . . . . . . . . . . . .	L Near	 000004EE _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 0000052D _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 00000556 _TEXT	
+  L4 . . . . . . . . . . . . . .	L Near	 000005A6 _TEXT	
+desenha_menu_G . . . . . . . . .	P Near	 00000B7C _TEXT	Length= 00000143 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000B91 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00000BB3 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 00000BF2 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00000C65 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 00000CA3 _TEXT	
+desenha_menu_H . . . . . . . . .	P Near	 00000A21 _TEXT	Length= 0000015B Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000A32 _TEXT	
+  L12  . . . . . . . . . . . . .	L Near	 00000A48 _TEXT	
+  L2 . . . . . . . . . . . . . .	L Near	 00000A67 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 00000A84 _TEXT	
+  L31  . . . . . . . . . . . . .	L Near	 00000A9A _TEXT	
+  L32  . . . . . . . . . . . . .	L Near	 00000AAD _TEXT	
+  L4 . . . . . . . . . . . . . .	L Near	 00000AD7 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00000B00 _TEXT	
+  L51  . . . . . . . . . . . . .	L Near	 00000B14 _TEXT	
+desenha_menu_I . . . . . . . . .	P Near	 000006BF _TEXT	Length= 000000D8 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000006D0 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 0000077B _TEXT	
+desenha_menu_L . . . . . . . . .	P Near	 000005C2 _TEXT	Length= 000000FD Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000005D3 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 0000066D _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 000006A3 _TEXT	
+desenha_menu_M . . . . . . . . .	P Near	 00000DFA _TEXT	Length= 0000017C Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000E0A _TEXT	
+  L11  . . . . . . . . . . . . .	L Near	 00000E25 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00000EFF _TEXT	
+desenha_menu_O . . . . . . . . .	P Near	 00001091 _TEXT	Length= 00000103 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000010A7 _TEXT	
+  L34  . . . . . . . . . . . . .	L Near	 000010F1 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 00001106 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 00001140 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 00001176 _TEXT	
+desenha_menu_P . . . . . . . . .	P Near	 00000797 _TEXT	Length= 0000011D Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000007A8 _TEXT	
+  L4 . . . . . . . . . . . . . .	L Near	 00000846 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 00000898 _TEXT	
+desenha_menu_R . . . . . . . . .	P Near	 00001296 _TEXT	Length= 0000012E Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000012AB _TEXT	
+desenha_menu_S . . . . . . . . .	P Near	 00000907 _TEXT	Length= 0000011A Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 00000919 _TEXT	
+  L3 . . . . . . . . . . . . . .	L Near	 00000974 _TEXT	
+  L5 . . . . . . . . . . . . . .	L Near	 000009C3 _TEXT	
+  L6 . . . . . . . . . . . . . .	L Near	 00000A05 _TEXT	
+desenha_menu_V . . . . . . . . .	P Near	 00001194 _TEXT	Length= 00000102 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+  L1 . . . . . . . . . . . . . .	L Near	 000011A9 _TEXT	
+  L11  . . . . . . . . . . . . .	L Near	 000011C4 _TEXT	
+desenha_menu . . . . . . . . . .	P Near	 00000466 _TEXT	Length= 00000053 Public STDCALL
+desenha_nivel  . . . . . . . . .	P Near	 00001A9A _TEXT	Length= 00000019 Public STDCALL
+desenha_obstaculo  . . . . . . .	P Near	 000017BE _TEXT	Length= 00000039 Public STDCALL
+  index  . . . . . . . . . . . .	DWord	 bp + 00000008
+desenha_opcoes_gameOver  . . . .	P Near	 000001CC _TEXT	Length= 0000003A Public STDCALL
+desenha_opcoes_menu  . . . . . .	P Near	 0000017F _TEXT	Length= 0000004D Public STDCALL
+desenha_personagem . . . . . . .	P Near	 00001747 _TEXT	Length= 00000032 Public STDCALL
+  x  . . . . . . . . . . . . . .	Byte	 bp + 00000008
+  y  . . . . . . . . . . . . . .	Byte	 bp + 0000000C
+desenha_pontuacao  . . . . . . .	P Near	 00001A81 _TEXT	Length= 00000019 Public STDCALL
+desenha_tela_cima  . . . . . . .	P Near	 0000003B _TEXT	Length= 0000003D Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 0000005A _TEXT	
+desenha_tela_direita . . . . . .	P Near	 000000F2 _TEXT	Length= 0000003D Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 00000111 _TEXT	
+desenha_tela_embaixo . . . . . .	P Near	 000000B5 _TEXT	Length= 0000003D Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 000000D4 _TEXT	
+desenha_tela_esquerda  . . . . .	P Near	 00000078 _TEXT	Length= 0000003D Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 00000097 _TEXT	
+desenha_tela . . . . . . . . . .	P Near	 0000001F _TEXT	Length= 0000001C Public STDCALL
+game_over  . . . . . . . . . . .	P Near	 000018F4 _TEXT	Length= 0000005D Public STDCALL
+imprime_acento . . . . . . . . .	P Near	 0000014F _TEXT	Length= 00000008 Public STDCALL
+imprime_apostrofe  . . . . . . .	P Near	 00000147 _TEXT	Length= 00000008 Public STDCALL
+imprime_barra2 . . . . . . . . .	P Near	 0000013F _TEXT	Length= 00000008 Public STDCALL
+imprime_barra  . . . . . . . . .	P Near	 00000137 _TEXT	Length= 00000008 Public STDCALL
+imprime_circunflexo  . . . . . .	P Near	 0000015F _TEXT	Length= 00000008 Public STDCALL
+imprime_parentesis_dir . . . . .	P Near	 00000167 _TEXT	Length= 00000008 Public STDCALL
+imprime_parentesis_esq . . . . .	P Near	 0000016F _TEXT	Length= 00000008 Public STDCALL
+imprime_pipe . . . . . . . . . .	P Near	 00000157 _TEXT	Length= 00000008 Public STDCALL
+imprime_seta_menu  . . . . . . .	P Near	 00000206 _TEXT	Length= 0000000B Public STDCALL
+imprime_traco  . . . . . . . . .	P Near	 00000177 _TEXT	Length= 00000008 Public STDCALL
+imprime_underline  . . . . . . .	P Near	 0000012F _TEXT	Length= 00000008 Public STDCALL
+inicializaObstaculos . . . . . .	P Near	 000013CF _TEXT	Length= 000000D3 Public STDCALL
+instrucoes . . . . . . . . . . .	P Near	 00001951 _TEXT	Length= 00000080 Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 000019AC _TEXT	
+jogo . . . . . . . . . . . . . .	P Near	 000014A2 _TEXT	Length= 0000028C Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 000014F3 _TEXT	
+  _ESC . . . . . . . . . . . . .	L Near	 00001589 _TEXT	
+  LEFT . . . . . . . . . . . . .	L Near	 0000159E _TEXT	
+  UP . . . . . . . . . . . . . .	L Near	 00001601 _TEXT	
+  RIGHT  . . . . . . . . . . . .	L Near	 00001664 _TEXT	
+  DOWN . . . . . . . . . . . . .	L Near	 000016C3 _TEXT	
+  GAMEOVER . . . . . . . . . . .	L Near	 0000171E _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001F Public STDCALL
+printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+sobre  . . . . . . . . . . . . .	P Near	 000019D1 _TEXT	Length= 000000B0 Public STDCALL
+  L0 . . . . . . . . . . . . . .	L Near	 00001A5C _TEXT	
+verifica_colisao . . . . . . . .	P Near	 00001779 _TEXT	Length= 00000045 Public STDCALL
+  xjogador . . . . . . . . . . .	Byte	 bp + 00000008
+  yjogador . . . . . . . . . . .	Byte	 bp + 0000000C
+  VERIFICA_OBSTACULOS  . . . . .	L Near	 00001786 _TEXT	
+  VERIFICAY  . . . . . . . . . .	L Near	 00001791 _TEXT	
+  VERIFICAX  . . . . . . . . . .	L Near	 0000179E _TEXT	
+  COLIDIU  . . . . . . . . . . .	L Near	 000017AB _TEXT	
+  NEXT . . . . . . . . . . . . .	L Near	 000017B2 _TEXT	
+  _RET . . . . . . . . . . . . .	L Near	 000017BA _TEXT	
+verifica_nivel . . . . . . . . .	P Near	 00001B19 _TEXT	Length= 0000003B Public STDCALL
+  pontosJogo . . . . . . . . . .	DWord	 bp + 00000008
+  ATUALIZA . . . . . . . . . . .	L Near	 00001B33 _TEXT	
+  _ATUALIZA  . . . . . . . . . .	L Near	 00001B3E _TEXT	
+  NEXT . . . . . . . . . . . . .	L Near	 00001B4F _TEXT	
+volta_cor_padrao . . . . . . . .	P Near	 000013C4 _TEXT	Length= 0000000B Public STDCALL
+wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
+CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
+CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
+CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
+CreateFile . . . . . . . . . . .	Text   	 CreateFileA
+DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
+ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
+ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
+ENABLE_MOUSE_INPUT . . . . . . .	Number	 00000010h   
+ENABLE_PROCESSED_INPUT . . . . .	Number	 00000001h   
+ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h   
+ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
+ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
+ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+FALSE  . . . . . . . . . . . . .	Number	 00000000h   
+FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
+FILE_ATTRIBUTE_COMPRESSED  . . .	Number	 00000800h   
+FILE_ATTRIBUTE_DEVICE  . . . . .	Number	 00000040h   
+FILE_ATTRIBUTE_DIRECTORY . . . .	Number	 00000010h   
+FILE_ATTRIBUTE_ENCRYPTED . . . .	Number	 00004000h   
+FILE_ATTRIBUTE_HIDDEN  . . . . .	Number	 00000002h   
+FILE_ATTRIBUTE_NORMAL  . . . . .	Number	 00000080h   
+FILE_ATTRIBUTE_NOT_CONTENT_INDEXED .	Number	 00002000h   
+FILE_ATTRIBUTE_OFFLINE . . . . .	Number	 00001000h   
+FILE_ATTRIBUTE_READONLY  . . . .	Number	 00000001h   
+FILE_ATTRIBUTE_REPARSE_POINT . .	Number	 00000400h   
+FILE_ATTRIBUTE_SPARSE_FILE . . .	Number	 00000200h   
+FILE_ATTRIBUTE_SYSTEM  . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_TEMPORARY . . . .	Number	 00000100h   
+FILE_BEGIN . . . . . . . . . . .	Number	 00000000h   
+FILE_CURRENT . . . . . . . . . .	Number	 00000001h   
+FILE_DELETE_CHILD  . . . . . . .	Number	 00000040h   
+FILE_END . . . . . . . . . . . .	Number	 00000002h   
+FILE_READ_DATA . . . . . . . . .	Number	 00000001h   
+FILE_SHARE_DELETE  . . . . . . .	Number	 00000004h   
+FILE_SHARE_READ  . . . . . . . .	Number	 00000001h   
+FILE_SHARE_WRITE . . . . . . . .	Number	 00000002h   
+FILE_WRITE_DATA  . . . . . . . .	Number	 00000002h   
+FOCUS_EVENT  . . . . . . . . . .	Number	 00000010h   
+FORMAT_MESSAGE_ALLOCATE_BUFFER .	Number	 00000100h   
+FORMAT_MESSAGE_FROM_SYSTEM . . .	Number	 00001000h   
+FormatMessage  . . . . . . . . .	Text   	 FormatMessageA
+GENERIC_ALL  . . . . . . . . . .	Number	 10000000h   
+GENERIC_EXECUTE  . . . . . . . .	Number	 20000000h   
+GENERIC_READ . . . . . . . . . .	Number	 -80000000h   
+GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
+GetCommandLine . . . . . . . . .	Text   	 GetCommandLineA
+HANDLE . . . . . . . . . . . . .	Text   	 DWORD
+HEAP_GENERATE_EXCEPTIONS . . . .	Number	 00000004h   
+HEAP_GROWABLE  . . . . . . . . .	Number	 00000002h   
+HEAP_NO_SERIALIZE  . . . . . . .	Number	 00000001h   
+HEAP_REALLOC_IN_PLACE_ONLY . . .	Number	 00000010h   
+HEAP_ZERO_MEMORY . . . . . . . .	Number	 00000008h   
+IDABORT  . . . . . . . . . . . .	Number	 00000003h   
+IDCANCEL . . . . . . . . . . . .	Number	 00000002h   
+IDCLOSE  . . . . . . . . . . . .	Number	 00000008h   
+IDCONTINUE . . . . . . . . . . .	Number	 0000000Bh   
+IDHELP . . . . . . . . . . . . .	Number	 00000009h   
+IDIGNORE . . . . . . . . . . . .	Number	 00000005h   
+IDNO . . . . . . . . . . . . . .	Number	 00000007h   
+IDOK . . . . . . . . . . . . . .	Number	 00000001h   
+IDRETRY  . . . . . . . . . . . .	Number	 00000004h   
+IDTIMEOUT  . . . . . . . . . . .	Number	 00007D00h   
+IDTRYAGAIN . . . . . . . . . . .	Number	 0000000Ah   
+IDYES  . . . . . . . . . . . . .	Number	 00000006h   
+INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h   
+KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
+KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
+KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
+LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
+LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
+MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
+MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
+MB_DEFBUTTON1  . . . . . . . . .	Number	 00000000h   
+MB_DEFBUTTON2  . . . . . . . . .	Number	 00000100h   
+MB_DEFBUTTON3  . . . . . . . . .	Number	 00000200h   
+MB_DEFBUTTON4  . . . . . . . . .	Number	 00000300h   
+MB_HELP  . . . . . . . . . . . .	Number	 00004000h   
+MB_ICONASTERISK  . . . . . . . .	Number	 00000040h   
+MB_ICONERROR . . . . . . . . . .	Number	 00000010h   
+MB_ICONEXCLAMATION . . . . . . .	Number	 00000030h   
+MB_ICONHAND  . . . . . . . . . .	Number	 00000010h   
+MB_ICONINFORMATION . . . . . . .	Number	 00000040h   
+MB_ICONQUESTION  . . . . . . . .	Number	 00000020h   
+MB_ICONSTOP  . . . . . . . . . .	Number	 00000010h   
+MB_ICONWARNING . . . . . . . . .	Number	 00000030h   
+MB_OKCANCEL  . . . . . . . . . .	Number	 00000001h   
+MB_OK  . . . . . . . . . . . . .	Number	 00000000h   
+MB_RETRYCANCEL . . . . . . . . .	Number	 00000005h   
+MB_SYSTEMMODAL . . . . . . . . .	Number	 00001000h   
+MB_TASKMODAL . . . . . . . . . .	Number	 00002000h   
+MB_USERICON  . . . . . . . . . .	Number	 00000080h   
+MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
+MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
+MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
+MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
+MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
+NULL . . . . . . . . . . . . . .	Number	 00000000h   
+NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
+OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
+PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
+RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
+RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
+ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
+ReadConsole  . . . . . . . . . .	Text   	 ReadConsoleA
+SCROLLLOCK_ON  . . . . . . . . .	Number	 00000040h   
+SHIFT_MASK . . . . . . . . . . .	Number	 00000010h   
+SHIFT_PRESSED  . . . . . . . . .	Number	 00000010h   
+STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch   
+STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
+STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
+SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
+TAB  . . . . . . . . . . . . . .	Number	 00000009h   
+TRUE . . . . . . . . . . . . . .	Number	 00000001h   
+TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
+VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
+VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
+VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
+VK_BACK  . . . . . . . . . . . .	Number	 00000008h   
+VK_CANCEL  . . . . . . . . . . .	Number	 00000003h   
+VK_CAPITAL . . . . . . . . . . .	Number	 00000014h   
+VK_CLEAR . . . . . . . . . . . .	Number	 0000000Ch   
+VK_CONTROL . . . . . . . . . . .	Number	 00000011h   
+VK_DECIMAL . . . . . . . . . . .	Number	 0000006Eh   
+VK_DELETE  . . . . . . . . . . .	Number	 0000002Eh   
+VK_DIVIDE  . . . . . . . . . . .	Number	 0000006Fh   
+VK_DOWN  . . . . . . . . . . . .	Number	 00000028h   
+VK_END . . . . . . . . . . . . .	Number	 00000023h   
+VK_ESCAPE  . . . . . . . . . . .	Number	 0000001Bh   
+VK_EXECUTE . . . . . . . . . . .	Number	 0000002Bh   
+VK_F10 . . . . . . . . . . . . .	Number	 00000079h   
+VK_F11 . . . . . . . . . . . . .	Number	 0000007Ah   
+VK_F12 . . . . . . . . . . . . .	Number	 0000007Bh   
+VK_F13 . . . . . . . . . . . . .	Number	 0000007Ch   
+VK_F14 . . . . . . . . . . . . .	Number	 0000007Dh   
+VK_F15 . . . . . . . . . . . . .	Number	 0000007Eh   
+VK_F16 . . . . . . . . . . . . .	Number	 0000007Fh   
+VK_F17 . . . . . . . . . . . . .	Number	 00000080h   
+VK_F18 . . . . . . . . . . . . .	Number	 00000081h   
+VK_F19 . . . . . . . . . . . . .	Number	 00000082h   
+VK_F1  . . . . . . . . . . . . .	Number	 00000070h   
+VK_F20 . . . . . . . . . . . . .	Number	 00000083h   
+VK_F21 . . . . . . . . . . . . .	Number	 00000084h   
+VK_F22 . . . . . . . . . . . . .	Number	 00000085h   
+VK_F23 . . . . . . . . . . . . .	Number	 00000086h   
+VK_F24 . . . . . . . . . . . . .	Number	 00000087h   
+VK_F2  . . . . . . . . . . . . .	Number	 00000071h   
+VK_F3  . . . . . . . . . . . . .	Number	 00000072h   
+VK_F4  . . . . . . . . . . . . .	Number	 00000073h   
+VK_F5  . . . . . . . . . . . . .	Number	 00000074h   
+VK_F6  . . . . . . . . . . . . .	Number	 00000075h   
+VK_F7  . . . . . . . . . . . . .	Number	 00000076h   
+VK_F8  . . . . . . . . . . . . .	Number	 00000077h   
+VK_F9  . . . . . . . . . . . . .	Number	 00000078h   
+VK_HELP  . . . . . . . . . . . .	Number	 0000002Fh   
+VK_HOME  . . . . . . . . . . . .	Number	 00000024h   
+VK_INSERT  . . . . . . . . . . .	Number	 0000002Dh   
+VK_LBUTTON . . . . . . . . . . .	Number	 00000001h   
+VK_LCONTROL  . . . . . . . . . .	Number	 000000A2h   
+VK_LEFT  . . . . . . . . . . . .	Number	 00000025h   
+VK_LMENU . . . . . . . . . . . .	Number	 000000A4h   
+VK_LSHIFT  . . . . . . . . . . .	Number	 000000A0h   
+VK_MENU  . . . . . . . . . . . .	Number	 00000012h   
+VK_MULTIPLY  . . . . . . . . . .	Number	 0000006Ah   
+VK_NEXT  . . . . . . . . . . . .	Number	 00000022h   
+VK_NUMLOCK . . . . . . . . . . .	Number	 00000090h   
+VK_NUMPAD0 . . . . . . . . . . .	Number	 00000060h   
+VK_NUMPAD1 . . . . . . . . . . .	Number	 00000061h   
+VK_NUMPAD2 . . . . . . . . . . .	Number	 00000062h   
+VK_NUMPAD3 . . . . . . . . . . .	Number	 00000063h   
+VK_NUMPAD4 . . . . . . . . . . .	Number	 00000064h   
+VK_NUMPAD5 . . . . . . . . . . .	Number	 00000065h   
+VK_NUMPAD6 . . . . . . . . . . .	Number	 00000066h   
+VK_NUMPAD7 . . . . . . . . . . .	Number	 00000067h   
+VK_NUMPAD8 . . . . . . . . . . .	Number	 00000068h   
+VK_NUMPAD9 . . . . . . . . . . .	Number	 00000069h   
+VK_PAUSE . . . . . . . . . . . .	Number	 00000013h   
+VK_PRINT . . . . . . . . . . . .	Number	 0000002Ah   
+VK_PRIOR . . . . . . . . . . . .	Number	 00000021h   
+VK_RBUTTON . . . . . . . . . . .	Number	 00000002h   
+VK_RCONTROL  . . . . . . . . . .	Number	 000000A3h   
+VK_RETURN  . . . . . . . . . . .	Number	 0000000Dh   
+VK_RIGHT . . . . . . . . . . . .	Number	 00000027h   
+VK_RMENU . . . . . . . . . . . .	Number	 000000A5h   
+VK_RSHIFT  . . . . . . . . . . .	Number	 000000A1h   
+VK_SCROLL  . . . . . . . . . . .	Number	 00000091h   
+VK_SEPARATER . . . . . . . . . .	Number	 0000006Ch   
+VK_SHIFT . . . . . . . . . . . .	Number	 00000010h   
+VK_SNAPSHOT  . . . . . . . . . .	Number	 0000002Ch   
+VK_SPACE . . . . . . . . . . . .	Number	 00000020h   
+VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
+VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
+VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
+WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
+WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
+WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+black  . . . . . . . . . . . . .	Number	 00000000h   
+blank  . . . . . . . . . . . . .	Byte	 000001D6 _DATA	
+blue . . . . . . . . . . . . . .	Number	 00000001h   
+brown  . . . . . . . . . . . . .	Number	 00000006h   
+carac  . . . . . . . . . . . . .	Byte	 00000004 _DATA	
+col  . . . . . . . . . . . . . .	Byte	 00000001 _DATA	
+cyan . . . . . . . . . . . . . .	Number	 00000003h   
+exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+gray . . . . . . . . . . . . . .	Number	 00000008h   
+green  . . . . . . . . . . . . .	Number	 00000002h   
+indice . . . . . . . . . . . . .	Byte	 000001FB _DATA	
+instrucoes_jogo_1  . . . . . . .	Byte	 00000077 _DATA	
+instrucoes_jogo_2  . . . . . . .	Byte	 000000A5 _DATA	
+instrucoes_jogo_3  . . . . . . .	Byte	 000000DA _DATA	
+jogadorx . . . . . . . . . . . .	Byte	 000001DB _DATA	
+jogadory . . . . . . . . . . . .	Byte	 000001DC _DATA	
+jogador  . . . . . . . . . . . .	Byte	 00000002 _DATA	
+level  . . . . . . . . . . . . .	Byte	 0000000F _DATA	
+lightBlue  . . . . . . . . . . .	Number	 00000009h   
+lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
+lightGray  . . . . . . . . . . .	Number	 00000007h   
+lightGreen . . . . . . . . . . .	Number	 0000000Ah   
+lightMagenta . . . . . . . . . .	Number	 0000000Dh   
+lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+magenta  . . . . . . . . . . . .	Number	 00000005h   
+melhor_ponto . . . . . . . . . .	Byte	 00000017 _DATA	
+melhor_pontuacao . . . . . . . .	DWord	 0000002C _DATA	
+nivel  . . . . . . . . . . . . .	DWord	 00000030 _DATA	
+obstaculos . . . . . . . . . . .	OBSTACULO  000001DD _DATA	
+opcao1_mg  . . . . . . . . . . .	Byte	 00000057 _DATA	
+opcao1_mp  . . . . . . . . . . .	Byte	 00000034 _DATA	
+opcao2_mg  . . . . . . . . . . .	Byte	 00000060 _DATA	
+opcao2_mp  . . . . . . . . . . .	Byte	 00000041 _DATA	
+opcao3_mg  . . . . . . . . . . .	Byte	 0000006F _DATA	
+opcao4_mp  . . . . . . . . . . .	Byte	 0000004C _DATA	
+opcao5_mp  . . . . . . . . . . .	Byte	 00000052 _DATA	
+points . . . . . . . . . . . . .	Byte	 00000006 _DATA	
+pontos . . . . . . . . . . . . .	DWord	 00000028 _DATA	
+red  . . . . . . . . . . . . . .	Number	 00000004h   
+row  . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+seta_menu_x  . . . . . . . . . .	Byte	 000001D9 _DATA	
+seta_menu_y  . . . . . . . . . .	Byte	 000001DA _DATA	
+seta_menu  . . . . . . . . . . .	Byte	 00000074 _DATA	
+sizeObstaculo  . . . . . . . . .	Number	 00000003h   
+sobre_1  . . . . . . . . . . . .	Byte	 00000108 _DATA	
+sobre_2  . . . . . . . . . . . .	Byte	 0000014D _DATA	
+sobre_3  . . . . . . . . . . . .	Byte	 0000017E _DATA	
+sobre_4  . . . . . . . . . . . .	Byte	 0000019D _DATA	
+white  . . . . . . . . . . . . .	Number	 0000000Fh   
+wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
+yellow . . . . . . . . . . . . .	Number	 0000000Eh   
+
+	   0 Warnings
+	   0 Errors
